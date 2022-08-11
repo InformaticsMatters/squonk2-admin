@@ -17,8 +17,19 @@ text-based user interface modelled on the popular `k9s`_ Kubernetes monitor.
 
 **SquAd** is *NOT* an alternative to (or replacement for) the existing
 `Data Manager UI`_. The role of **SquAd** is to provide a simple and lightweight
-Data Manager (and Account Server) *monitor*, providing administrator-only
+Data Manager (and Account Server) *monitor*, with administrator-only
 features not available in the UI.
+
+*Importantly* **SquAd** should be a "rapid development" platform where we
+can add features quickly using a lightweight display framework.
+**SquAd** fails if we spend too much time battling with the UI.
+
+We chose `Textual`_ because it...
+
+- has had some favorable reviews
+- works
+- is extremely lightweight
+- is under active development
 
 .. _data manager ui: https://github.com/InformaticsMatters/mini-apps-data-tier-ui
 .. _k9s: https://k9scli.io
