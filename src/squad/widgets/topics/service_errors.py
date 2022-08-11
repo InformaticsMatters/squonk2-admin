@@ -26,7 +26,7 @@ class ServiceErrors(TopicRenderer):
         ):
             # No response, or we now need to replace what we have.
             # Get an access token (it may be the one we already have)
-            self.access_token = AccessToken().get_dm_access_token(
+            self.access_token = AccessToken.get_dm_access_token(
                 prior_token=self.access_token
             )
             self.last_response_time = now
@@ -42,7 +42,7 @@ class ServiceErrors(TopicRenderer):
         )
         table.add_column("", style=common.INDEX_STYLE, no_wrap=True, justify="right")
         table.add_column("ID", style=common.ITEM_KEY_STYLE, no_wrap=True)
-        table.add_column("Time", style=common.ITEM_KEY_STYLE, no_wrap=True)
+        table.add_column("Time (UTC)", style=common.ITEM_KEY_STYLE, no_wrap=True)
         table.add_column("Severity", style=common.ITEM_KEY_STYLE, no_wrap=True)
         table.add_column("Summary", style=common.SIZE_STYLE, no_wrap=True)
 

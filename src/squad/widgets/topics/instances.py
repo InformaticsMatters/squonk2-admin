@@ -3,6 +3,7 @@
 from datetime import datetime
 from typing import Any, Dict, List
 
+import pandas
 from rich.panel import Panel
 from rich.table import Table
 from rich.style import Style
@@ -43,7 +44,7 @@ class Instances(TopicRenderer):
         ):
             # No response, or we now need to replace what we have.
             # Get an access token (it may be the one we already have)
-            self.access_token = AccessToken().get_dm_access_token(
+            self.access_token = AccessToken.get_dm_access_token(
                 prior_token=self.access_token
             )
             self.last_response_time = now
@@ -53,8 +54,10 @@ class Instances(TopicRenderer):
                 set_admin_response: DmApiRv = DmApi.set_admin_state(
                     self.access_token, admin=True
                 )
-                assert set_admin_response.success
-                self.last_response = DmApi.get_available_instances(self.access_token)
+                if set_admin_response.success:
+                    self.last_response = DmApi.get_available_instances(
+                        self.access_token
+                    )
 
         # Results in a table.
         table: Table = Table(
@@ -66,18 +69,18 @@ class Instances(TopicRenderer):
         table.add_column("UUID", style=common.ITEM_KEY_STYLE, no_wrap=True)
         table.add_column("Name", style=common.NAME_STYLE, no_wrap=True)
         table.add_column("Owner", style=common.USER_STYLE, no_wrap=True)
-        table.add_column("Launched", style=common.DATE_STYLE, no_wrap=True)
+        table.add_column("Launched (UTC)", style=common.DATE_STYLE, no_wrap=True)
         table.add_column("Phase", style=common.USER_STYLE, no_wrap=True)
         table.add_column("App/Job", style=common.JOB_STYLE, no_wrap=True)
 
         # Populate rows based on the last response.
         # We populate 'data' with the project material
-        # so that we can sort of size using pandas.
+        # so that we can sort on 'launched' date using pandas.
+        data: Dict[str, List[Any]] = {}
+        row_number: int = 1
         if self.last_response and self.last_response.success:
             for instance in self.last_response.msg["instances"]:
-                name: str = instance["name"]
-                if len(name) > 14:
-                    name = name[:14] + "\u2026"
+                name: str = common.concat(instance["name"], 14)
                 job: Text = Text(no_wrap=True)
                 if instance["application_type"] == "JOB":
                     job.append(instance["job_job"], style=common.JOB_STYLE)
@@ -91,16 +94,33 @@ class Instances(TopicRenderer):
                         job.append(_APPS[app_id], style=common.APP_STYLE)
                     else:
                         job.append(app_id, style=common.APP_STYLE)
-                phase: str = instance["phase"]
-                phase_style = _PHASE_STYLE.get(phase.upper(), _DEFAULT_PHASE_STYLE)
-                table.add_row(
-                    str(table.row_count + 1),
+                data[f"{row_number}"] = [
                     instance["id"],
                     name,
                     instance["owner"],
                     instance["launched"],
-                    Text(phase, style=phase_style),
+                    instance["phase"],
                     job,
+                ]
+                row_number += 1
+
+        if data:
+            # Create a data-frame and sort on 'launched' date (descending)
+            # This will ensuer the most recently launched instance
+            # is at the top of the list.
+            data_frame: pandas.DataFrame = pandas.DataFrame.from_dict(
+                data, orient="index"
+            )
+            for _, row in data_frame.sort_values(by=[3], ascending=False).iterrows():
+                phase: str = row[4]
+                table.add_row(
+                    str(table.row_count + 1),
+                    row[0],
+                    row[1],
+                    row[2],
+                    row[3],
+                    Text(phase, style=_PHASE_STYLE.get(phase, _DEFAULT_PHASE_STYLE)),
+                    row[5],
                 )
 
         title: str = f"Instances ({table.row_count})"

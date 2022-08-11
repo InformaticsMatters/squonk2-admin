@@ -28,7 +28,7 @@ class UndefinedExchangeRates(TopicRenderer):
         ):
             # No response, or we now need to replace what we have.
             # Get an access token (it may be the one we already have)
-            self.access_token = AccessToken().get_dm_access_token(
+            self.access_token = AccessToken.get_dm_access_token(
                 prior_token=self.access_token
             )
             self.last_response_time = now

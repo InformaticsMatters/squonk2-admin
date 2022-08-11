@@ -19,12 +19,6 @@ from squad.access_token import AccessToken
 class EnvironmentWidget(Widget):  # type: ignore
     """Displays the environment."""
 
-    environment: Environment = Environment()
-    env: str = environment.environment()
-    kc_hostname: str = environment.keycloak_hostname()
-    user: str = environment.user()
-    password: str = environment.user_password()
-
     as_access_token: Optional[str] = None
     dm_access_token: Optional[str] = None
 
@@ -40,20 +34,28 @@ class EnvironmentWidget(Widget):  # type: ignore
         # Get access tokens (using anything we have)
         # Soon we will not need them - we just use it to indicate the
         # availability of the authentication service.
-        self.as_access_token = AccessToken().get_as_access_token(
+        self.as_access_token = AccessToken.get_as_access_token(
             prior_token=self.as_access_token
         )
-        self.dm_access_token = AccessToken().get_dm_access_token(
+        self.dm_access_token = AccessToken.get_dm_access_token(
             prior_token=self.dm_access_token
         )
 
-        # If we got an access token we add a 'tick' (U2713) after the keyclock
+        # If we got a DM access token we add a 'tick' (U2713) after the keyclock
         # hostname. If the token failed we add a 'cross' (U2717).
         access_token_status: str = "\u2713"
         access_token_status_style: Style = common.KEY_VALUE_SUCCESS_STYLE
-        if self.as_access_token is None or self.dm_access_token is None:
+        if self.dm_access_token is None:
             access_token_status = "\u2717"
             access_token_status_style = common.KEY_VALUE_ERROR_STYLE
+
+        as_api_version: str = "Not connected"
+        as_api_version_style: Style = common.KEY_VALUE_ERROR_STYLE
+        as_ret_val: AsApiRv = AsApi.get_version()
+        if as_ret_val.success:
+            as_api_version = f"v{as_ret_val.msg['version']}"
+            as_api_version_style = common.VERSION_STYLE
+        as_api_version_value: Text = Text(as_api_version, style=as_api_version_style)
 
         # Get the version of the DM API and the AS API
         dm_api_version: str = "Not connected"
@@ -61,23 +63,8 @@ class EnvironmentWidget(Widget):  # type: ignore
         dm_ret_val: DmApiRv = DmApi.get_version(self.dm_access_token)
         if dm_ret_val.success:
             dm_api_version = f"v{dm_ret_val.msg['version']}"
-            dm_api_version_style = common.KEY_VALUE_STYLE
+            dm_api_version_style = common.VERSION_STYLE
         dm_api_version_value: Text = Text(dm_api_version, style=dm_api_version_style)
-
-        as_api_version: str = "Not connected"
-        as_api_version_style: Style = common.KEY_VALUE_ERROR_STYLE
-        as_ret_val: AsApiRv = AsApi.get_version()
-        if as_ret_val.success:
-            as_api_version = f"v{as_ret_val.msg['version']}"
-            as_api_version_style = common.KEY_VALUE_STYLE
-        as_api_version_value: Text = Text(as_api_version, style=as_api_version_style)
-
-        # DM Merchant (if we have a version)
-        dm_merchant: Text = common.CROSS
-        if self.dm_access_token and dm_ret_val.success:
-            dm_ret_val = DmApi.get_account_server_registration(self.dm_access_token)
-            if dm_ret_val.success:
-                dm_merchant = Text(dm_ret_val.msg["name"])
 
         table = Table(
             show_header=False,
@@ -91,16 +78,22 @@ class EnvironmentWidget(Widget):  # type: ignore
         # it contains a 'tick' or 'cross' depending on whether a
         # token was obtained.
         kc_host = Text()
-        kc_host.append(f"{self.kc_hostname}", style=common.KEY_VALUE_STYLE)
+        kc_host.append(
+            f"{Environment.keycloak_hostname()}", style=common.KEY_VALUE_STYLE
+        )
         kc_host.append(f" {access_token_status}", style=access_token_status_style)
         # The API lines are also dynamically styled.
 
-        table.add_row("Env", self.env)
+        as_hostname: str = (
+            Environment.as_hostname() if Environment.as_hostname() else "(Undefined)"
+        )
+
+        table.add_row("Env", Environment.environment())
         table.add_row("Auth", kc_host)
-        table.add_row("User", self.user)
-        table.add_row("AS Ver", as_api_version_value)
-        table.add_row("DM Ver", dm_api_version_value)
-        table.add_row("Merchant", dm_merchant)
+        table.add_row("AS", common.concat(as_hostname, 40))
+        table.add_row("", as_api_version_value)
+        table.add_row("DM", common.concat(Environment.dm_hostname(), 40))
+        table.add_row("", dm_api_version_value)
 
         return Panel(
             table,

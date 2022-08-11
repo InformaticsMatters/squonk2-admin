@@ -8,29 +8,34 @@
 # 'SQUAD_ENVIRONMENT_FILE', e.g. 'export SQUAD_ENVIRONMENT_FILE=~/my-env'
 
 # The 'environments' block defines one or more environments.
-# Each has a name. Here we define an environment 'default' but environments
-# can be called anything. Restrict your names to letters and hyphens only.
+# Each has a name. Here we define an environment 'site-a' but environments
+# can be called anything (but please try to restrict your names to letters
+# and hyphens only).
 environments:
-  default:
+  site-a:
     # The hostname of the keycloak server, without a 'http' prefix
-    # or a '/auth' suffix.
+    # and without a '/auth' suffix.
     keycloak-hostname: example.com
     # The realm name used for the Squonk2 environment.
     keycloak-realm: squonk2
-    # The client IDs of the Account Server and Data Manager
+    # The Keycloak client IDs of the Account Server and Data Manager.
+    # The Account Server client ID is optional.
     keycloak-as-client-id: account-server-api
     keycloak-dm-client-id: data-manager-api
-    # The hostnames of the Account Server and Data Manager,
-    # without a 'http' prefix or api suffix.
-    as-hostname: example.com
-    dm-hostname: example.com
-    # The username and password of a user for the Account Server and
-    # Data Manager. The user *MUST* have admin rights.
-    # or api suffix.
-    user: dlister
-    password: blob1234
+    # The hostnames of the Account Server and Data Manager APIs,
+    # without a 'http' prefix and without an 'api' suffix.
+    # If you have not provided an Account Server client ID the
+    # hostname value is optional.
+    as-hostname: as.example.com
+    dm-hostname: dm.example.com
+    # The username and password of an admin user that has access
+    # to the Account Server and Data Manager.
+    # The user *MUST* have admin rights.
+    admin-user: dlister
+    admin-password: blob1234
 
-# The final part of the file is an environment property,
-# which SquAd uses to select the appropriate environment from the block above.
-# It's simply the name of one of the environment above.
-environment: default
+# The final part of the file is a 'default' property,
+# which SquAd uses to select the appropriate environment from the block above
+# when all else fails. It's simply the name of one of the environment
+# declarations above.
+default: site-a

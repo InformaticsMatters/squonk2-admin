@@ -61,6 +61,27 @@ With an environments file in place you can run **SquAd**::
 
     squad
 
+As an alternative to having separate ``environments`` files for each Squonk2
+environment, you can populate the file with the details of more than one
+Squonk2 environment, giving each a unique name. If you do this
+you can select them when you launch **SquAd** by providing the
+the name of the environment on the command-line.
+
+For example, if you have an ``environments`` file with details of two
+environments called ``site-a`` and ``site-b`` you can run **SquAd** with
+the command::
+
+    squad site-a
+
+or::
+
+    squad site-b
+
+One environment has be be named in the ``environments`` ``deafult`` property
+(maybe your *go to* environment) but using this technique you can quickly
+switch between environments, or have multiple **SquAd** applications running,
+using a single file.
+
 Logging
 -------
 

@@ -5,7 +5,7 @@ from typing import Dict
 from rich.panel import Panel
 from textual.widget import Widget
 
-from squad.common import warning
+from squad.common import log_warning
 from squad.widgets.topics.base import TopicRenderer
 from squad.widgets.topics.assets import Assets
 from squad.widgets.topics.datasets import Datasets
@@ -45,7 +45,7 @@ class TopicWidget(Widget):  # type: ignore
         Ignoring topics that are not supported.
         """
         if topic not in TopicWidget.topic_renderers:
-            warning(f"Unsupported topic: '{topic}'")
+            log_warning(f"Unsupported topic: '{topic}'")
             return
         TopicWidget.topic = topic
 

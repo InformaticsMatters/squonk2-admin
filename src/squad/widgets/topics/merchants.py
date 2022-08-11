@@ -34,7 +34,7 @@ class Merchants(TopicRenderer):
         ):
             # No response, or we now need to replace what we have.
             # Get an access token (it may be the one we already have)
-            self.access_token = AccessToken().get_as_access_token(
+            self.access_token = AccessToken.get_as_access_token(
                 prior_token=self.access_token
             )
             self.last_response_time = now
@@ -51,7 +51,7 @@ class Merchants(TopicRenderer):
         table.add_column("", style=common.INDEX_STYLE, no_wrap=True, justify="right")
         table.add_column("ID", no_wrap=True, style=common.USER_STYLE, justify="right")
         table.add_column("Kind", no_wrap=True)
-        table.add_column("Created", style=common.DATE_STYLE, no_wrap=True)
+        table.add_column("Created (UTC)", style=common.DATE_STYLE, no_wrap=True)
         table.add_column("Hostname", style=common.ITEM_KEY_STYLE, no_wrap=True)
         table.add_column("Name", style=common.MERCHANT_STYLE, no_wrap=True)
 

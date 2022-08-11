@@ -41,7 +41,7 @@ class Datasets(TopicRenderer):
         ):
             # No response, or we now need to replace what we have.
             # Get an access token (it may be the one we already have)
-            self.access_token = AccessToken().get_dm_access_token(
+            self.access_token = AccessToken.get_dm_access_token(
                 prior_token=self.access_token
             )
             self.last_response_time = now
@@ -62,7 +62,7 @@ class Datasets(TopicRenderer):
         table.add_column("Stage", style=common.USER_STYLE, no_wrap=True)
         table.add_column("Filename", style=common.NAME_STYLE, no_wrap=True)
         table.add_column("Size", style=common.SIZE_STYLE, no_wrap=True, justify="right")
-        table.add_column("Published", style=common.DATE_STYLE, no_wrap=True)
+        table.add_column("Published (UTC)", style=common.DATE_STYLE, no_wrap=True)
         table.add_column(
             "Used", style=common.USED_STYLE, no_wrap=True, justify="center"
         )

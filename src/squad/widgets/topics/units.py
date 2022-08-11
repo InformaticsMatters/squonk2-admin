@@ -29,7 +29,7 @@ class Units(TopicRenderer):
         ):
             # No response, or we now need to replace what we have.
             # Get an access token (it may be the one we already have)
-            self.access_token = AccessToken().get_as_access_token(
+            self.access_token = AccessToken.get_as_access_token(
                 prior_token=self.access_token
             )
             self.last_response_time = now
@@ -48,7 +48,7 @@ class Units(TopicRenderer):
         table.add_column("UUID", style=common.ITEM_KEY_STYLE, no_wrap=True)
         table.add_column("Name", style=common.NAME_STYLE, no_wrap=True)
         table.add_column("Owner", style=common.USER_STYLE, no_wrap=True)
-        table.add_column("Created", style=common.DATE_STYLE, no_wrap=True)
+        table.add_column("Created (UTC)", style=common.DATE_STYLE, no_wrap=True)
         table.add_column("Private", no_wrap=True, justify="center")
 
         # Populate rows based on the last response.

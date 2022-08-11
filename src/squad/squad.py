@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """The entry module for the Squad application."""
+import argparse
 import os
 import sys
 from typing import Optional
@@ -103,32 +104,59 @@ class Squad(App):  # type: ignore
 def main() -> int:
     """Application entry point, called when the module is executed."""
 
-    # Redirect stderr to avoid any potential SSL errors
-    # e.g the 'ssl.SSLCertVerificationError'
-    # which will get written to the output stream
-    # from interfering with the TUI.
-    #
-    # We can't write to stdout/stderr and use Textual.
-    sys.stderr = open(os.devnull, "w", encoding="utf-8")
+    parser = argparse.ArgumentParser(prog="squad", description="Squonk2 Admin (SquAd)")
+    parser.add_argument(
+        "name",
+        nargs="?",
+        help="The environment name to use. This is the name"
+        " of the environment, e.g. dls-dev, not the"
+        " location of the environments file. If not provided"
+        " SquAd will use the environment value defined"
+        " in the environments file.",
+    )
+    parser.add_argument(
+        "--enable-stderr",
+        help="Used for debug. Normally stderr is hidden from"
+        " the console to avoid disturbing the textual"
+        " framework. But when there are problems we"
+        " need to see the stderr stream. Set this"
+        " to allow stderr to appear ion the console.",
+        action="store_true",
+    )
+    args = parser.parse_args()
 
     # Load the DM/AS config from the environment file
     # we do this here to make sure the environment is intact
     # before allowing any widgets to use it.
+    name: Optional[str] = args.name if args.name else None
     try:
-        environment: Environment = Environment()
+        Environment.init(name=name)
     except Exception as ex:  # pylint: disable=broad-except
         print(f"Error loading environment: {ex}")
         sys.exit(1)
 
     # Set the API URLs for the AS and DM
     # based on the environment we've just read.
-    DmApi.set_api_url(environment.dm_api(), verify_ssl_cert=False)
-    AsApi.set_api_url(environment.as_api(), verify_ssl_cert=False)
+    if Environment.as_api():
+        AsApi.set_api_url(Environment.as_api(), verify_ssl_cert=False)
+    DmApi.set_api_url(Environment.dm_api(), verify_ssl_cert=False)
+
+    # Redirect stderr to avoid any potential SSL errors
+    # e.g. the 'ssl.SSLCertVerificationError'
+    # which will get written to the output stream
+    # from interfering with the TUI.
+    #
+    # We can't write to stdout/stderr and use Textual.
+    if not args.enable_stderr:
+        sys.stderr = open(os.devnull, "w", encoding="utf-8")
 
     # Run our app class
     Squad.run(title="SquAd", log=_LOG)
 
     # If we get here, return 0 to indicate success
+    # after restoring stderr.
+    if not args.enable_stderr:
+        sys.stderr.close()
     return 0
 
 
