@@ -101,3 +101,14 @@ setting the environment variable ``SQUAD_LOGFILE`` when running the
 application::
 
     SQUAD_LOGFILE=./squad.log squad
+
+Debugging
+---------
+
+`Textual`_ doesn't like anything being written to the console so printing
+(even to ``stderr``) will topple the display. That's why ``stderr`` is
+diverted when the application is running and nothing is printed.
+There comes a time, though, when you need to see the error log.
+For these times you can run **SquAd** without stderr diverted::
+
+    squad --enable-stderr
