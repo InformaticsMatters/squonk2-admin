@@ -1,1 +1,0 @@
-# squonk2-admin
