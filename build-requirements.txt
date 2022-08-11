@@ -1,0 +1,3 @@
+pyroma
+mypy
+pre-commit

@@ -1,0 +1,15 @@
+[messages control]
+
+# Disable some distracting checks.
+# See http://pylint.pycqa.org/en/latest/user_guide/message-control.html
+#
+# R : (Refactoring) warnings
+disable = duplicate-code,
+          import-error,
+          too-few-public-methods,
+          too-many-arguments,
+          too-many-locals,
+          too-many-branches,
+          too-many-instance-attributes,
+          too-many-nested-blocks,
+          too-many-statements

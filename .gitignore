@@ -1,0 +1,9 @@
+.mypy_cache/
+.idea/
+venv/
+dist/
+build/
+src/im_squad.egg-info/
+**/*.log
+**/*.pyc
+**/.DS_Store
