@@ -18,7 +18,7 @@ with open(
 class LogoWidget(Widget):  # type: ignore
     """The application logo, displays at the top of the terminal
     and displays the logo and the application version.
-    When docked the 'size' is expected to be 15 so the logo
+    When docked the 'size' is expected to be at least 14 so the logo
     is correctly aligned.
     """
 

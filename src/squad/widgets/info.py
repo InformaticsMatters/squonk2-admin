@@ -1,4 +1,4 @@
-"""A widget to display the summary information in the banner.
+"""A widget to display the help information in the banner.
 """
 from rich.panel import Panel
 from rich.table import Table
@@ -10,7 +10,7 @@ from squad import common
 
 
 class InfoWidget(Widget):  # type: ignore
-    """Displays general/summary information."""
+    """Displays general/help information."""
 
     def render(self) -> Panel:
         """Render the latest information.

@@ -24,7 +24,7 @@ class EnvironmentWidget(Widget):  # type: ignore
 
     def on_mount(self) -> None:
         """Widget initialisation."""
-        # Set an interval timer - we check the AS and DM APIs,
+        # Set an interval timer - we check the AS and DM APIs
         # regularly trying to get the version of each.
         self.set_interval(20, self.refresh)
 
@@ -32,8 +32,6 @@ class EnvironmentWidget(Widget):  # type: ignore
         """Render the widget."""
 
         # Get access tokens (using anything we have)
-        # Soon we will not need them - we just use it to indicate the
-        # availability of the authentication service.
         self.as_access_token = AccessToken.get_as_access_token(
             prior_token=self.as_access_token
         )
@@ -43,12 +41,14 @@ class EnvironmentWidget(Widget):  # type: ignore
 
         # If we got a DM access token we add a 'tick' (U2713) after the keyclock
         # hostname. If the token failed we add a 'cross' (U2717).
+        # We don't care about the AS, it's not used for the environment information.
         access_token_status: str = "\u2713"
         access_token_status_style: Style = common.KEY_VALUE_SUCCESS_STYLE
         if self.dm_access_token is None:
             access_token_status = "\u2717"
             access_token_status_style = common.KEY_VALUE_ERROR_STYLE
 
+        # Get the version of the DM API and the AS API
         as_api_version: str = "Not connected"
         as_api_version_style: Style = common.KEY_VALUE_ERROR_STYLE
         as_ret_val: AsApiRv = AsApi.get_version()
@@ -57,7 +57,6 @@ class EnvironmentWidget(Widget):  # type: ignore
             as_api_version_style = common.VERSION_STYLE
         as_api_version_value: Text = Text(as_api_version, style=as_api_version_style)
 
-        # Get the version of the DM API and the AS API
         dm_api_version: str = "Not connected"
         dm_api_version_style: Style = common.KEY_VALUE_ERROR_STYLE
         dm_ret_val: DmApiRv = DmApi.get_version(self.dm_access_token)
@@ -66,6 +65,7 @@ class EnvironmentWidget(Widget):  # type: ignore
             dm_api_version_style = common.VERSION_STYLE
         dm_api_version_value: Text = Text(dm_api_version, style=dm_api_version_style)
 
+        # Information is presented in a table.
         table = Table(
             show_header=False,
             collapse_padding=True,
@@ -76,14 +76,14 @@ class EnvironmentWidget(Widget):  # type: ignore
 
         # The 'Authentication host' is a special value,
         # it contains a 'tick' or 'cross' depending on whether a
-        # token was obtained.
+        # DM token was obtained.
         kc_host = Text()
         kc_host.append(
             f"{Environment.keycloak_hostname()}", style=common.KEY_VALUE_STYLE
         )
         kc_host.append(f" {access_token_status}", style=access_token_status_style)
-        # The API lines are also dynamically styled.
 
+        # The API lines are also dynamically styled.
         as_hostname: str = (
             Environment.as_hostname() if Environment.as_hostname() else "(Undefined)"
         )

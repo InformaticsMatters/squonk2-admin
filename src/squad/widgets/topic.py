@@ -1,4 +1,6 @@
-"""A textual widget used to display whaever the user has chosen.
+"""A textual widget used to display whatever the user has chosen.
+It a dynamic panel that displays Instances, Projects, Datasets etc.
+depending on what key the user has hit.
 """
 from typing import Dict
 
@@ -25,6 +27,7 @@ class TopicWidget(Widget):  # type: ignore
 
     # What are we displaying?
     topic: str = "instances"
+    # What can we display?
     topic_renderers: Dict[str, TopicRenderer] = {
         "assets": Assets(),
         "datasets": Datasets(),
@@ -42,7 +45,7 @@ class TopicWidget(Widget):  # type: ignore
     @classmethod
     def set_topic(cls, topic: str) -> None:
         """Sets the new topic to display.
-        Ignoring topics that are not supported.
+        Ignoring topics that are not in the topic_renderers map.
         """
         if topic not in TopicWidget.topic_renderers:
             log_warning(f"Unsupported topic: '{topic}'")
@@ -52,6 +55,9 @@ class TopicWidget(Widget):  # type: ignore
     def on_mount(self) -> None:
         """Widget initialisation."""
         # Period between refresh attempts
+        # The AS/DM API isn't called at this rate - this is just the
+        # rate the chosen info panel is refreshed - each panel decides how often
+        # to call the underlying AS or DM (typically every 20 seconds or so).
         self.set_interval(2, self.refresh)
 
     def render(self) -> Panel:

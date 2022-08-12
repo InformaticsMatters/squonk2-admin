@@ -28,7 +28,7 @@ class AccessToken:
 
     @classmethod
     def get_dm_access_token(cls, *, prior_token: Optional[str] = None) -> Optional[str]:
-        """Returns a token for the DM API."""
+        """Returns a token for the DM API or None if a token could not be obtained."""
         access_token: Optional[str] = Auth.get_access_token(
             keycloak_url=Environment.keycloak_url(),
             keycloak_realm=Environment.keycloak_realm(),

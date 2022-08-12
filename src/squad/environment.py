@@ -10,8 +10,10 @@ from yaml import FullLoader, load
 # The environments file (YAML) is typically expected in the user's '~/.squad'
 # directory. It contains 'environments' that define the connection details
 # for the various Keycloak, Data Manager and Account Server services.
+# This default is replaced with the value of the environment variable
+# 'SQUAD_ENVIRONMENT_FILE'.
 #
-# See the project's 'environments' file for an example.
+# See the project's 'environments' file for an example of the content of the file.
 _ENVIRONMENT_DIRECTORY: str = "~/.squad"
 _ENVIRONMENT_FILE: str = os.environ.get(
     "SQUAD_ENVIRONMENT_FILE", f"{_ENVIRONMENT_DIRECTORY}/environments"
@@ -19,40 +21,48 @@ _ENVIRONMENT_FILE: str = os.environ.get(
 
 # The key for the block of environments
 _ENVIRONMENTS_KEY: str = "environments"
-# The 'default' environment
+# The key for the 'default' environment
 _DEFAULT_KEY: str = "default"
 
 # Keys required in each environment.
 _KEYCLOAK_HOSTNAME_KEY: str = "keycloak-hostname"
 _KEYCLOAK_REALM_KEY: str = "keycloak-realm"
-_KEYCLOAK_AS_CLIENT_ID_KEY: str = "keycloak-as-client-id"
 _KEYCLOAK_DM_CLIENT_ID_KEY: str = "keycloak-dm-client-id"
-_AS_HOSTNAME_KEY: str = "as-hostname"
 _DM_HOSTNAME_KEY: str = "dm-hostname"
 _ADMIN_USER_KEY: str = "admin-user"
 _ADMIN_PASSWORD_KEY: str = "admin-password"
+# Optional keys
+_KEYCLOAK_AS_CLIENT_ID_KEY: str = "keycloak-as-client-id"
+_AS_HOSTNAME_KEY: str = "as-hostname"
 
 
 class Environment:
-    """Loads the environment from the environment file."""
+    """Loads the values from the environment file for the given envrionment."""
 
+    # Location of the file
     __environments_file: str = os.path.expandvars(os.path.expanduser(_ENVIRONMENT_FILE))
+    # The environment to use.
+    # This is ether the value of the 'deafult' in the file or the
+    # 'name' passed into our init() method.
     __environment: str = ""
+    # Dictionary-form of the entire file
     __config: Dict[str, Any] = {}
 
+    # Values extracted from the chosen environment
     __keycloak_hostname: str = ""
     __keycloak_realm: str = ""
-    __keycloak_as_client_id: Optional[str] = None
     __keycloak_dm_client_id: str = ""
-    __as_hostname: Optional[str] = None
     __dm_hostname: str = ""
     __admin_user: str = ""
     __admin_password: str = ""
+    __keycloak_as_client_id: Optional[str] = None
+    __as_hostname: Optional[str] = None
 
     @classmethod
     def init(cls, name: Optional[str] = None) -> None:
         """Initialisation - loads the environment file,
-        returning values form the environment that's named in the file.
+        returning values from the environment that's passed int or
+        named in the 'default' key in the file.
         """
         # Regardless, if there is no default environment directory, create one.
         os.makedirs(os.path.expanduser("~/.squad"), exist_ok=True)
@@ -79,7 +89,7 @@ class Environment:
 
         # Get the required environment.
         # First, use anything passed in. If no name is provided
-        # use the environment value in the file
+        # use the default value in the file
         if name:
             Environment.__environment = name
         else:
@@ -91,6 +101,7 @@ class Environment:
             )
 
         # Get the required key values...
+        # We assert if these cannot be found.
         Environment.__keycloak_hostname = str(
             Environment.__get_config_value(_KEYCLOAK_HOSTNAME_KEY)
         )
@@ -118,7 +129,10 @@ class Environment:
 
     @classmethod
     def __get_config_value(cls, key: str, optional: bool = False) -> Optional[str]:
-        """Gets the configuration key's value for the configured environment."""
+        """Gets the configuration key's value for the configured environment.
+        If optional is False we assert if a value cannot be found or
+        return None if it cannot be found and is considered optional.
+        """
         assert Environment.__environment
         if (
             not optional
