@@ -58,6 +58,8 @@ class Instances(TopicRenderer):
                     self.last_response = DmApi.get_available_instances(
                         self.access_token
                     )
+            else:
+                self.last_response = None
 
         # Results in a table.
         table: Table = Table(

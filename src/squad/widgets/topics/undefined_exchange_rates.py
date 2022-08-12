@@ -37,6 +37,8 @@ class UndefinedExchangeRates(TopicRenderer):
                 self.last_response = DmApi.get_job_exchange_rates(
                     self.access_token, only_undefined=True
                 )
+            else:
+                self.last_response = None
 
         # Results are presented in a table.
         table: Table = Table(

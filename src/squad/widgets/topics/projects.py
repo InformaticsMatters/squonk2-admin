@@ -37,6 +37,8 @@ class Projects(TopicRenderer):
             if self.access_token:
                 # Got a token, time to get a new set of results...
                 self.last_response = DmApi.get_available_projects(self.access_token)
+            else:
+                self.last_response = None
 
         # Results in a table.
         table: Table = Table(

@@ -41,6 +41,8 @@ class Merchants(TopicRenderer):
             if self.access_token:
                 # Got a token, time to get a new set of results...
                 self.last_response = AsApi.get_merchants(self.access_token)
+            else:
+                self.last_response = None
 
         # Results in a table.
         table: Table = Table(
