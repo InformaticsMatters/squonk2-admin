@@ -23,7 +23,7 @@ _COLUMNS: List[Tuple[str, Style, str]] = [
     ("Filename", common.NAME_STYLE, "left"),
     ("Size", common.SIZE_STYLE, "right"),
     ("Published (UTC)", common.DATE_STYLE, "left"),
-    ("Used", None, "centre"),
+    ("Used", None, "center"),
 ]
 
 # Styles for instance phases.
