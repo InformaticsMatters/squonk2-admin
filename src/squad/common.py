@@ -11,11 +11,9 @@ BANNER_LOGO_WIDTH: int = 14
 
 # Styles
 CORE_STYLE: Style = Style(color="grey70", bgcolor="black")
-LOGO_STYLE: Style = Style(color="orange_red1", bold=True)
-HELP_KEY_STYLE: Style = Style(color="deep_sky_blue1", bold=True)
-HELP_TEXT_STYLE: Style = Style(color="grey50")
+
 INDEX_STYLE: Style = Style(color="grey50", italic=True)
-KEY_STYLE: Style = Style(color="orange_red1", bold=True)
+KEY_STYLE: Style = Style(color="orange_red1")
 KEY_VALUE_STYLE: Style = Style(color="bright_white")
 KEY_VALUE_ERROR_STYLE: Style = Style(color="bright_red", italic=True)
 KEY_VALUE_SUCCESS_STYLE: Style = Style(color="green3")
@@ -29,9 +27,8 @@ USED_STYLE: Style = Style(color="blue1")
 COIN_STYLE: Style = Style(color="yellow1")
 COIN_OVERSPEND_STYLE: Style = Style(color="yellow1", bgcolor="dark_goldenrod")
 COIN_LIMIT_STYLE: Style = Style(color="yellow1", bgcolor="deep_pink2")
-DATE_STYLE: Style = Style(
-    color="plum1",
-)
+
+DATE_STYLE: Style = Style(color="plum1")
 
 APP_STYLE: Style = Style(color="cyan1")
 

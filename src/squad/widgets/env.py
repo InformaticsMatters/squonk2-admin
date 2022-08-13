@@ -15,6 +15,9 @@ from squad import common
 from squad.environment import Environment
 from squad.access_token import AccessToken
 
+_ENV_KEY_STYLE: Style = Style(color="orange_red1")
+_ENV_KEY_VALUE_STYLE: Style = Style(color="bright_white")
+
 
 class EnvironmentWidget(Widget):  # type: ignore
     """Displays the environment."""
@@ -39,15 +42,6 @@ class EnvironmentWidget(Widget):  # type: ignore
             prior_token=self.dm_access_token
         )
 
-        # If we got a DM access token we add a 'tick' (U2713) after the keyclock
-        # hostname. If the token failed we add a 'cross' (U2717).
-        # We don't care about the AS, it's not used for the environment information.
-        access_token_status: str = "\u2713"
-        access_token_status_style: Style = common.KEY_VALUE_SUCCESS_STYLE
-        if self.dm_access_token is None:
-            access_token_status = "\u2717"
-            access_token_status_style = common.KEY_VALUE_ERROR_STYLE
-
         # Get the version of the DM API and the AS API
         as_api_version: str = "Not connected"
         as_api_version_style: Style = common.KEY_VALUE_ERROR_STYLE
@@ -71,29 +65,36 @@ class EnvironmentWidget(Widget):  # type: ignore
             collapse_padding=True,
             box=None,
         )
-        table.add_column("Key", justify="right", style=common.KEY_STYLE, no_wrap=True)
-        table.add_column("Value", style=common.KEY_VALUE_STYLE, no_wrap=True)
+        table.add_column("Key", style=_ENV_KEY_STYLE, no_wrap=True, justify="right")
+        table.add_column("Value", style=_ENV_KEY_VALUE_STYLE, no_wrap=True)
 
         # The 'Authentication host' is a special value,
         # it contains a 'tick' or 'cross' depending on whether a
         # DM token was obtained.
-        kc_host = Text()
-        kc_host.append(
-            f"{Environment.keycloak_hostname()}", style=common.KEY_VALUE_STYLE
+        kc_host = Text(
+            f"{Environment.keycloak_hostname()} ", style=_ENV_KEY_VALUE_STYLE
         )
-        kc_host.append(f" {access_token_status}", style=access_token_status_style)
+        if self.dm_access_token:
+            kc_host.append(common.TICK)
+        else:
+            kc_host.append(common.CROSS)
 
         # The API lines are also dynamically styled.
-        as_hostname: str = (
-            Environment.as_hostname() if Environment.as_hostname() else "(Undefined)"
-        )
+        if Environment.as_hostname():
+            as_hostname: str = Environment.as_hostname()
+            as_hostname_style: Style = common.KEY_VALUE_STYLE
+        else:
+            as_hostname = "(Undefined)"
+            as_hostname_style = common.KEY_VALUE_ERROR_STYLE
 
         table.add_row("Env", Environment.environment())
         table.add_row("Auth", kc_host)
-        table.add_row("AS", common.truncate(as_hostname, 40))
-        table.add_row("V", as_api_version_value)
+        table.add_row(
+            "AS", Text(common.truncate(as_hostname, 40), style=as_hostname_style)
+        )
+        table.add_row("v", as_api_version_value)
         table.add_row("DM", common.truncate(Environment.dm_hostname(), 40))
-        table.add_row("V", dm_api_version_value)
+        table.add_row("v", dm_api_version_value)
 
         return Panel(
             table,

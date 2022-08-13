@@ -1,12 +1,16 @@
 """A widget to display the help information in the banner.
 """
 from rich.panel import Panel
+from rich.style import Style
 from rich.table import Table
 from rich import box
 
 from textual.widget import Widget
 
 from squad import common
+
+_HELP_KEY_STYLE: Style = Style(color="deep_sky_blue1", bold=True)
+_HELP_TEXT_STYLE: Style = Style(color="grey50")
 
 
 class InfoWidget(Widget):  # type: ignore
@@ -23,16 +27,14 @@ class InfoWidget(Widget):  # type: ignore
             collapse_padding=True,
             box=None,
         )
-        table.add_column(
-            "common-key", justify="right", style=common.HELP_KEY_STYLE, no_wrap=True
-        )
-        table.add_column("common-key-help", style=common.HELP_TEXT_STYLE, no_wrap=True)
-        table.add_column("a-key", style=common.HELP_KEY_STYLE, no_wrap=True)
-        table.add_column("a-key-help", style=common.HELP_TEXT_STYLE, no_wrap=True)
-        table.add_column("b-key", style=common.HELP_KEY_STYLE, no_wrap=True)
-        table.add_column("b-key-help", style=common.HELP_TEXT_STYLE, no_wrap=True)
-        table.add_column("c-key", style=common.HELP_KEY_STYLE, no_wrap=True)
-        table.add_column("c-key-help", style=common.HELP_TEXT_STYLE, no_wrap=True)
+        table.add_column("a-key", justify="right", style=_HELP_KEY_STYLE, no_wrap=True)
+        table.add_column("a-key-help", style=_HELP_TEXT_STYLE, no_wrap=True)
+        table.add_column("b-key", style=_HELP_KEY_STYLE, no_wrap=True)
+        table.add_column("b-key-help", style=_HELP_TEXT_STYLE, no_wrap=True)
+        table.add_column("c-key", style=_HELP_KEY_STYLE, no_wrap=True)
+        table.add_column("c-key-help", style=_HELP_TEXT_STYLE, no_wrap=True)
+        table.add_column("d-key", style=_HELP_KEY_STYLE, no_wrap=True)
+        table.add_column("d-key-help", style=_HELP_TEXT_STYLE, no_wrap=True)
 
         table.add_row(
             "<Q>",
