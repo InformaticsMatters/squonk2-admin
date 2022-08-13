@@ -75,7 +75,7 @@ class Merchants(TopicRenderer):
                     merchant["kind"],
                     merchant["created"],
                     merchant["api_hostname"],
-                    merchant["name"],
+                    common.truncate(merchant["name"], 15),
                 ]
                 row_number += 1
 

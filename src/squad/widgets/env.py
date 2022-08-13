@@ -90,9 +90,9 @@ class EnvironmentWidget(Widget):  # type: ignore
 
         table.add_row("Env", Environment.environment())
         table.add_row("Auth", kc_host)
-        table.add_row("AS", common.concat(as_hostname, 40))
+        table.add_row("AS", common.truncate(as_hostname, 40))
         table.add_row("V", as_api_version_value)
-        table.add_row("DM", common.concat(Environment.dm_hostname(), 40))
+        table.add_row("DM", common.truncate(Environment.dm_hostname(), 40))
         table.add_row("V", dm_api_version_value)
 
         return Panel(

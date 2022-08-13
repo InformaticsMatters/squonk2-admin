@@ -63,9 +63,10 @@ def log_warning(msg: str) -> None:
     textual.log(f"SquAd WARNING # {msg}")
 
 
-def concat(line: str, length: int) -> str:
-    """Concatenate a line of text to the specified length
-    adding unicode ellipsis if necessary.
+def truncate(line: str, length: int) -> str:
+    """Truncates a line of text to the specified length
+    adding a single unicode character ellipsis if necessary.
+    The returned string is no longer than the provided length.
     """
     if len(line) <= length:
         return line

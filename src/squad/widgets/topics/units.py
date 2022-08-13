@@ -93,8 +93,8 @@ class Units(TopicRenderer):
             ).iterrows():
                 self.table.add_row(
                     str(self.table.row_count + 1),
-                    row[0],
-                    row[1],
+                    common.truncate(row[0], 15),
+                    common.truncate(row[1], 15),
                     row[2],
                     row[3],
                     row[4],

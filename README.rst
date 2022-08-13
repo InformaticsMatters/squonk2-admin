@@ -14,6 +14,8 @@ it's of little use to users who are not administrators.
 **SquAd** uses the `squonk2-python-client`_ to interact with a Squonk2 environment
 and uses Will McGugan's `textual`_ framework to provide the user with a simple,
 text-based user interface modelled on the popular `k9s`_ Kubernetes monitor.
+At the moment **SquAd** is provides non-destructive, *read-only* access to the
+chosen Squonk2 environment.
 
 **SquAd** is *NOT* an alternative to (or replacement for) the existing
 `Data Manager UI`_. The role of **SquAd** is to provide a simple and lightweight

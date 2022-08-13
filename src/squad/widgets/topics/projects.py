@@ -66,10 +66,9 @@ class Projects(TopicRenderer):
         if self.last_response and self.last_response.success:
             for project in self.last_response.msg["projects"]:
                 total_size_bytes += project["size"]
-                name: str = common.concat(project["name"], 14)
                 data[f"{row_number}"] = [
                     project["project_id"],
-                    name,
+                    project["name"],
                     project["owner"],
                     project["size"],
                 ]
@@ -90,7 +89,7 @@ class Projects(TopicRenderer):
                 self.table.add_row(
                     str(self.table.row_count + 1),
                     row[0],
-                    row[1],
+                    common.truncate(row[1], 15),
                     row[2],
                     size_str,
                 )
