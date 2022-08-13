@@ -2,10 +2,11 @@
 """
 from datetime import datetime
 from decimal import Decimal
+from typing import Any, Dict, List, Tuple
 
 import humanize
+import pandas
 from rich.panel import Panel
-from rich.table import Table
 from rich.text import Text
 from rich.style import Style
 
@@ -13,11 +14,28 @@ from squonk2.as_api import AsApi
 
 from squad import common
 from squad.access_token import AccessToken
-from .base import TopicRenderer
+from .base import SortOrder, TopicRenderer
+
+# List of columns using names, styles and justification
+_COLUMNS: List[Tuple[str, Style, str]] = [
+    ("UID", common.ITEM_KEY_STYLE, "left"),
+    ("Type", common.TYPE_STYLE, "left"),
+    ("Unit", common.NAME_STYLE, "left"),
+    ("Name", common.NAME_STYLE, "left"),
+    ("Storage", common.SIZE_STYLE, "right"),
+    ("Coins", common.COIN_STYLE, "right"),
+    ("Allowance", common.COIN_STYLE, "right"),
+    ("Limit", common.COIN_STYLE, "right"),
+]
 
 
 class Products(TopicRenderer):
     """Displays AS Products."""
+
+    def __init__(self) -> None:
+        # Default sort column
+        self.num_columns = len(_COLUMNS)
+        self.sort_column = 5
 
     def render(self) -> Panel:
         """Render the widget."""
@@ -41,71 +59,74 @@ class Products(TopicRenderer):
                 self.last_response = None
 
         # Results in a table.
-        table: Table = Table(
-            collapse_padding=True,
-            header_style=common.INDEX_STYLE,
-            box=None,
-        )
-        table.add_column("", style=common.INDEX_STYLE, no_wrap=True, justify="right")
-        table.add_column("UUID", style=common.ITEM_KEY_STYLE, no_wrap=True)
-        table.add_column("Type", style=common.TYPE_STYLE, no_wrap=True)
-        table.add_column("Unit", style=common.NAME_STYLE, no_wrap=True)
-        table.add_column("Name", style=common.NAME_STYLE, no_wrap=True)
-        table.add_column(
-            "Storage", style=common.SIZE_STYLE, no_wrap=True, justify="right"
-        )
-        table.add_column(
-            "Coins", style=common.COIN_STYLE, no_wrap=True, justify="right"
-        )
-        table.add_column(
-            "Allowance", style=common.COIN_STYLE, no_wrap=True, justify="right"
-        )
-        table.add_column(
-            "Limit", style=common.COIN_STYLE, no_wrap=True, justify="right"
-        )
+        self.prepare_table(_COLUMNS)
+        assert self.table
 
         # Populate rows based on the last response.
+        # We populate 'data' with the project material
+        # so that we can sort on 'launched' date using pandas.
+        data: Dict[str, List[Any]] = {}
+        row_number: int = 1
         if self.last_response and self.last_response.success:
             for product in self.last_response.msg["products"]:
-                coins_used: Decimal = Decimal(product["coins"]["used"])
-                allowance: Decimal = Decimal(product["coins"]["allowance"])
-                limit: Decimal = Decimal(product["coins"]["limit"])
+                # A size (or blank)?
+                if product["storage"]["size"]["current"] == "0 Bytes":
+                    size: str = ""
+                else:
+                    size = product["storage"]["size"]["current"]
+                data[f"{row_number}"] = [
+                    product["product"]["id"],
+                    product["product"]["type"],
+                    product["unit"]["name"],
+                    product["product"]["name"],
+                    size,
+                    Decimal(product["coins"]["used"]),
+                    Decimal(product["coins"]["allowance"]),
+                    Decimal(product["coins"]["limit"]),
+                ]
+                row_number += 1
+
+        # Populate rows based on the last response.
+        if data:
+            data_frame: pandas.DataFrame = pandas.DataFrame.from_dict(
+                data, orient="index"
+            )
+            for _, row in data_frame.sort_values(
+                by=[self.sort_column], ascending=self.sort_order == SortOrder.ASCENDING
+            ).iterrows():
+                coins_used: Decimal = Decimal(format(row[5], ".1f"))
+                allowance: Decimal = Decimal(format(row[6], ".1f"))
+                limit: Decimal = Decimal(format(row[7], ".1f"))
                 coins_used_style: Style = common.COIN_STYLE
                 if coins_used > limit:
                     coins_used_style = common.COIN_LIMIT_STYLE
                 elif coins_used > allowance:
                     coins_used_style = common.COIN_OVERSPEND_STYLE
 
-                # A size (or blank)?
-                if product["storage"]["size"]["current"] == "0 Bytes":
-                    size: str = ""
-                else:
-                    size = product["storage"]["size"]["current"]
-
                 # Coins (if greater than zero)
                 if coins_used > Decimal(0):
                     coins: Text = Text(
-                        humanize.intcomma(product["coins"]["used"]),
+                        humanize.intcomma(coins_used),
                         style=coins_used_style,
                     )
                 else:
                     coins = Text("")
 
-                table.add_row(
-                    str(table.row_count + 1),
-                    product["product"]["id"],
-                    product["product"]["type"],
-                    product["unit"]["name"],
-                    product["product"]["name"],
-                    size,
+                self.table.add_row(
+                    str(self.table.row_count + 1),
+                    row[0],
+                    row[1],
+                    row[2],
+                    row[3],
+                    row[4],
                     coins,
-                    humanize.intcomma(product["coins"]["allowance"]),
-                    humanize.intcomma(product["coins"]["limit"]),
+                    humanize.intcomma(allowance),
+                    humanize.intcomma(limit),
                 )
 
-        title: str = f"Products ({table.row_count})"
+        title: str = f"Products ({self.table.row_count})"
         return Panel(
-            table if table.row_count else Text(),
+            self.table if self.table.row_count else Text(),
             title=title,
             style=common.CORE_STYLE,
             padding=0,
