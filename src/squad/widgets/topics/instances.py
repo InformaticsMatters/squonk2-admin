@@ -119,6 +119,17 @@ class Instances(TopicRenderer):
                 by=[self.sort_column], ascending=self.sort_order == SortOrder.ASCENDING
             ).iterrows():
                 phase: str = row[4]
+                # Identify App/Job for prettier rendering.
+                app_job: List[str] = row[5].split("|")
+                if len(app_job) == 1:
+                    # It's an application.
+                    app_job_id: Text = Text(app_job[0], style=common.APP_STYLE)
+                else:
+                    # It's a job.
+                    app_job_id = Text(app_job[0], style=common.JOB_STYLE)
+                    app_job_id.append("|", style=common.SEPARATOR_STYLE)
+                    app_job_id.append(app_job[1], style=common.VERSION_STYLE)
+
                 self.table.add_row(
                     str(self.table.row_count + 1),
                     row[0],
@@ -126,7 +137,7 @@ class Instances(TopicRenderer):
                     row[2],
                     row[3],
                     Text(phase, style=_PHASE_STYLE.get(phase, _DEFAULT_PHASE_STYLE)),
-                    row[5],
+                    app_job_id,
                 )
 
         title: str = f"Instances ({self.table.row_count})"
