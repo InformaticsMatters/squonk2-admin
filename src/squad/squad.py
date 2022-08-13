@@ -41,6 +41,14 @@ class Squad(App):  # type: ignore
         await self.bind("t", "topic('products')")
         await self.bind("u", "topic('undefined-exchange-rates')")
 
+        # Sort column keys
+        await self.bind("left", "sort_column('down')")
+        await self.bind("right", "sort_column('up')")
+
+        # Sort order keys
+        await self.bind("up", "sort_order('ascending')")
+        await self.bind("down", "sort_order('descending')")
+
     async def on_mount(self) -> None:
         """Widget initialisation - application start"""
 
@@ -99,6 +107,16 @@ class Squad(App):  # type: ignore
         content of the main 'topic' area.
         """
         TopicWidget.set_topic(topic)
+
+    @staticmethod
+    async def action_sort_column(up_down: str) -> None:
+        """Reacts to a left/right cursor key-press, given 'up' or 'down'."""
+        TopicWidget.sort_column(up_down)
+
+    @staticmethod
+    async def action_sort_order(up_down: str) -> None:
+        """Reacts to a left/right cursor key-press, given 'ascending' or 'descending'."""
+        TopicWidget.sort_order(up_down)
 
 
 def main() -> int:

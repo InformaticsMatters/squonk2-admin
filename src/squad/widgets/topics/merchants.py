@@ -1,17 +1,27 @@
 """A widget used to display AS Merchant information.
 """
 from datetime import datetime
-from typing import Dict
+from typing import Any, Dict, List, Tuple
 
+import pandas
 from rich.panel import Panel
-from rich.table import Table
 from rich.text import Text
 from rich.style import Style
 from squonk2.as_api import AsApi
 
 from squad import common
 from squad.access_token import AccessToken
-from .base import TopicRenderer
+from .base import SortOrder, TopicRenderer
+
+# List of columns using names, styles and justification.
+# some styles are dynamic.
+_COLUMNS: List[Tuple[str, Style, str]] = [
+    ("ID", common.MERCHANT_ID_STYLE, "right"),
+    ("Kind", None, "left"),
+    ("Created (UTC)", common.DATE_STYLE, "left"),
+    ("Hostname", common.ITEM_KEY_STYLE, "left"),
+    ("Name", common.MERCHANT_STYLE, "left"),
+]
 
 # Styles for instance phases.
 _MERCHANT_STYLE: Dict[str, Style] = {
@@ -22,6 +32,11 @@ _DEFAULT_MERCHANT_STYLE: Style = Style(color="green4")
 
 class Merchants(TopicRenderer):
     """Displays AS assets."""
+
+    def __init__(self) -> None:
+        # Default sort column
+        self.num_columns = len(_COLUMNS)
+        self.sort_column = 1
 
     def render(self) -> Panel:
         """Render the widget."""
@@ -45,36 +60,48 @@ class Merchants(TopicRenderer):
                 self.last_response = None
 
         # Results in a table.
-        table: Table = Table(
-            collapse_padding=True,
-            header_style=common.INDEX_STYLE,
-            box=None,
-        )
-        table.add_column("", style=common.INDEX_STYLE, no_wrap=True, justify="right")
-        table.add_column("ID", no_wrap=True, style=common.USER_STYLE, justify="right")
-        table.add_column("Kind", no_wrap=True)
-        table.add_column("Created (UTC)", style=common.DATE_STYLE, no_wrap=True)
-        table.add_column("Hostname", style=common.ITEM_KEY_STYLE, no_wrap=True)
-        table.add_column("Name", style=common.MERCHANT_STYLE, no_wrap=True)
+        self.prepare_table(_COLUMNS)
+        assert self.table
 
         # Populate rows based on the last response.
+        # We populate 'data' with the project material
+        # so that we can sort on 'launched' date using pandas.
+        data: Dict[str, List[Any]] = {}
+        row_number: int = 1
         if self.last_response and self.last_response.success:
             for merchant in self.last_response.msg["merchants"]:
-                kind: str = merchant["kind"]
-                table.add_row(
-                    str(table.row_count + 1),
-                    str(merchant["id"]),
-                    Text(
-                        kind, style=_MERCHANT_STYLE.get(kind, _DEFAULT_MERCHANT_STYLE)
-                    ),
+                data[f"{row_number}"] = [
+                    merchant["id"],
+                    merchant["kind"],
                     merchant["created"],
                     merchant["api_hostname"],
                     merchant["name"],
+                ]
+                row_number += 1
+
+        # Populate rows based on the last response.
+        if data:
+            data_frame: pandas.DataFrame = pandas.DataFrame.from_dict(
+                data, orient="index"
+            )
+            for _, row in data_frame.sort_values(
+                by=[self.sort_column], ascending=self.sort_order == SortOrder.ASCENDING
+            ).iterrows():
+                kind: str = row[1]
+                self.table.add_row(
+                    str(self.table.row_count + 1),
+                    str(row[0]),
+                    Text(
+                        kind, style=_MERCHANT_STYLE.get(kind, _DEFAULT_MERCHANT_STYLE)
+                    ),
+                    row[2],
+                    row[3],
+                    row[4],
                 )
 
-        title: str = f"Merchants ({table.row_count})"
+        title: str = f"Merchants ({self.table.row_count})"
         return Panel(
-            table if table.row_count else Text(),
+            self.table if self.table.row_count else Text(),
             title=title,
             style=common.CORE_STYLE,
             padding=0,

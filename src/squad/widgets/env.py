@@ -53,16 +53,16 @@ class EnvironmentWidget(Widget):  # type: ignore
         as_api_version_style: Style = common.KEY_VALUE_ERROR_STYLE
         as_ret_val: AsApiRv = AsApi.get_version()
         if as_ret_val.success:
-            as_api_version = f"v{as_ret_val.msg['version']}"
-            as_api_version_style = common.VERSION_STYLE
+            as_api_version = f"{as_ret_val.msg['version']}"
+            as_api_version_style = common.KEY_VALUE_STYLE
         as_api_version_value: Text = Text(as_api_version, style=as_api_version_style)
 
         dm_api_version: str = "Not connected"
         dm_api_version_style: Style = common.KEY_VALUE_ERROR_STYLE
         dm_ret_val: DmApiRv = DmApi.get_version(self.dm_access_token)
         if dm_ret_val.success:
-            dm_api_version = f"v{dm_ret_val.msg['version']}"
-            dm_api_version_style = common.VERSION_STYLE
+            dm_api_version = f"{dm_ret_val.msg['version']}"
+            dm_api_version_style = common.KEY_VALUE_STYLE
         dm_api_version_value: Text = Text(dm_api_version, style=dm_api_version_style)
 
         # Information is presented in a table.
@@ -91,9 +91,9 @@ class EnvironmentWidget(Widget):  # type: ignore
         table.add_row("Env", Environment.environment())
         table.add_row("Auth", kc_host)
         table.add_row("AS", common.concat(as_hostname, 40))
-        table.add_row("", as_api_version_value)
+        table.add_row("V", as_api_version_value)
         table.add_row("DM", common.concat(Environment.dm_hostname(), 40))
-        table.add_row("", dm_api_version_value)
+        table.add_row("V", dm_api_version_value)
 
         return Panel(
             table,

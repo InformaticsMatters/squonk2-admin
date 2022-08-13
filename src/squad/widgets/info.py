@@ -31,9 +31,29 @@ class InfoWidget(Widget):  # type: ignore
         table.add_column("a-key-help", style=common.HELP_TEXT_STYLE, no_wrap=True)
         table.add_column("b-key", style=common.HELP_KEY_STYLE, no_wrap=True)
         table.add_column("b-key-help", style=common.HELP_TEXT_STYLE, no_wrap=True)
+        table.add_column("c-key", style=common.HELP_KEY_STYLE, no_wrap=True)
+        table.add_column("c-key-help", style=common.HELP_TEXT_STYLE, no_wrap=True)
 
-        table.add_row("<Q>", "Quit", "<p>", "Projects", "<o>", "Orgs/Units")
-        table.add_row("", "", "<d>", "Datasets", "<n>", "Personal units")
+        table.add_row(
+            "<Q>",
+            "Quit",
+            "<p>",
+            "Projects",
+            "<o>",
+            "Orgs/Units",
+            "<left|right>",
+            "Sort column",
+        )
+        table.add_row(
+            "",
+            "",
+            "<d>",
+            "Datasets",
+            "<n>",
+            "Personal units",
+            "<up|down>",
+            "Sort order",
+        )
         table.add_row("", "", "<i>", "Instances", "<t>", "Products")
         table.add_row("", "", "<r>", "Defined exchange rates", "<a>", "Assets")
         table.add_row("", "", "<u>", "Undefined exchange rates", "<m>", "Merchants")

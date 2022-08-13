@@ -1,23 +1,36 @@
 """A widget used to display DM Project information.
 """
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import humanize
 import pandas
 from rich.panel import Panel
-from rich.table import Table
+from rich.style import Style
 from rich.text import Text
 
 from squonk2.dm_api import DmApi
 
 from squad import common
 from squad.access_token import AccessToken
-from .base import TopicRenderer
+from .base import SortOrder, TopicRenderer
+
+# List of columns using names, styles and justification
+_COLUMNS: List[Tuple[str, Style, str]] = [
+    ("UUID", common.ITEM_KEY_STYLE, "left"),
+    ("Name", common.NAME_STYLE, "left"),
+    ("Owner", common.USER_STYLE, "left"),
+    ("Size", common.SIZE_STYLE, "right"),
+]
 
 
 class Projects(TopicRenderer):
     """Displays projects."""
+
+    def __init__(self) -> None:
+        # Default sort column
+        self.num_columns = 4
+        self.sort_column = 3
 
     def render(self) -> Panel:
         """Render the widget."""
@@ -41,16 +54,8 @@ class Projects(TopicRenderer):
                 self.last_response = None
 
         # Results in a table.
-        table: Table = Table(
-            collapse_padding=True,
-            header_style=common.INDEX_STYLE,
-            box=None,
-        )
-        table.add_column("", style=common.INDEX_STYLE, no_wrap=True, justify="right")
-        table.add_column("UUID", style=common.ITEM_KEY_STYLE, no_wrap=True)
-        table.add_column("Name", style=common.NAME_STYLE, no_wrap=True)
-        table.add_column("Owner", style=common.USER_STYLE, no_wrap=True)
-        table.add_column("Size", style=common.SIZE_STYLE, no_wrap=True, justify="right")
+        self.prepare_table(_COLUMNS)
+        assert self.table
 
         # Populate rows based on the last response.
         # We populate 'data' with the project material
@@ -76,12 +81,14 @@ class Projects(TopicRenderer):
             data_frame: pandas.DataFrame = pandas.DataFrame.from_dict(
                 data, orient="index"
             )
-            for _, row in data_frame.sort_values(by=[3], ascending=False).iterrows():
+            for _, row in data_frame.sort_values(
+                by=[self.sort_column], ascending=self.sort_order == SortOrder.ASCENDING
+            ).iterrows():
                 size_str: str = ""
                 if row[3] > 0:
                     size_str = humanize.naturalsize(row[3], binary=True)
-                table.add_row(
-                    str(table.row_count + 1),
+                self.table.add_row(
+                    str(self.table.row_count + 1),
                     row[0],
                     row[1],
                     row[2],
@@ -89,9 +96,9 @@ class Projects(TopicRenderer):
                 )
 
         total_size_human: str = humanize.naturalsize(total_size_bytes, binary=True)
-        title: str = f"Projects ({table.row_count}) [{total_size_human}]"
+        title: str = f"Projects ({self.table.row_count}) [{total_size_human}]"
         return Panel(
-            table if table.row_count else Text(),
+            self.table if self.table.row_count else Text(),
             title=title,
             style=common.CORE_STYLE,
             padding=0,

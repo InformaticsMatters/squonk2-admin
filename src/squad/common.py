@@ -41,7 +41,10 @@ VERSION_STYLE: Style = Style(color="orchid1")
 RATE_STYLE: Style = Style(color="green3")
 SEPARATOR_STYLE: Style = Style(color="bright_white")
 
+MERCHANT_ID_STYLE: Style = Style(color="dark_sea_green2")
 MERCHANT_STYLE: Style = Style(color="dark_sea_green2")
+
+REVERSE: Style = Style(reverse=True)
 
 # Predefined/common text items
 TICK: Text = Text("\u2713", style=Style(color="green3", bold=True, italic=True))

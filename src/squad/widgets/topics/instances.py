@@ -1,11 +1,10 @@
 """A widget used to display DM Instance information.
 """
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import pandas
 from rich.panel import Panel
-from rich.table import Table
 from rich.style import Style
 from rich.text import Text
 
@@ -13,7 +12,17 @@ from squonk2.dm_api import DmApi, DmApiRv
 
 from squad import common
 from squad.access_token import AccessToken
-from .base import TopicRenderer
+from .base import SortOrder, TopicRenderer
+
+# List of columns using names, styles and justification
+_COLUMNS: List[Tuple[str, Style, str]] = [
+    ("UUID", common.ITEM_KEY_STYLE, "left"),
+    ("Name", common.NAME_STYLE, "left"),
+    ("Owner", common.USER_STYLE, "left"),
+    ("Launched (UTC)", common.DATE_STYLE, "left"),
+    ("Phase", common.USER_STYLE, "left"),
+    ("App/Job", common.JOB_STYLE, "left"),
+]
 
 # Styles for instance phases.
 _PHASE_STYLE: Dict[str, Style] = {
@@ -31,7 +40,10 @@ _APPS: Dict[str, str] = {"jupyternotebooks.squonk.it": "Jupyter Notebook"}
 class Instances(TopicRenderer):
     """Displays instances."""
 
-    instances: List[Dict[str, Any]] = []
+    def __init__(self) -> None:
+        # Default sort column
+        self.num_columns = len(_COLUMNS)
+        self.sort_column = 3
 
     def render(self) -> Panel:
         """Render the widget."""
@@ -62,18 +74,8 @@ class Instances(TopicRenderer):
                 self.last_response = None
 
         # Results in a table.
-        table: Table = Table(
-            collapse_padding=True,
-            header_style=common.INDEX_STYLE,
-            box=None,
-        )
-        table.add_column("", style=common.INDEX_STYLE, no_wrap=True, justify="right")
-        table.add_column("UUID", style=common.ITEM_KEY_STYLE, no_wrap=True)
-        table.add_column("Name", style=common.NAME_STYLE, no_wrap=True)
-        table.add_column("Owner", style=common.USER_STYLE, no_wrap=True)
-        table.add_column("Launched (UTC)", style=common.DATE_STYLE, no_wrap=True)
-        table.add_column("Phase", style=common.USER_STYLE, no_wrap=True)
-        table.add_column("App/Job", style=common.JOB_STYLE, no_wrap=True)
+        self.prepare_table(_COLUMNS)
+        assert self.table
 
         # Populate rows based on the last response.
         # We populate 'data' with the project material
@@ -102,7 +104,7 @@ class Instances(TopicRenderer):
                     instance["owner"],
                     instance["launched"],
                     instance["phase"],
-                    job,
+                    str(job),
                 ]
                 row_number += 1
 
@@ -113,10 +115,12 @@ class Instances(TopicRenderer):
             data_frame: pandas.DataFrame = pandas.DataFrame.from_dict(
                 data, orient="index"
             )
-            for _, row in data_frame.sort_values(by=[3], ascending=False).iterrows():
+            for _, row in data_frame.sort_values(
+                by=[self.sort_column], ascending=self.sort_order == SortOrder.ASCENDING
+            ).iterrows():
                 phase: str = row[4]
-                table.add_row(
-                    str(table.row_count + 1),
+                self.table.add_row(
+                    str(self.table.row_count + 1),
                     row[0],
                     row[1],
                     row[2],
@@ -125,9 +129,9 @@ class Instances(TopicRenderer):
                     row[5],
                 )
 
-        title: str = f"Instances ({table.row_count})"
+        title: str = f"Instances ({self.table.row_count})"
         return Panel(
-            table if table.row_count else Text(),
+            self.table if self.table.row_count else Text(),
             title=title,
             style=common.CORE_STYLE,
             padding=0,

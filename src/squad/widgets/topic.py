@@ -52,6 +52,16 @@ class TopicWidget(Widget):  # type: ignore
             return
         TopicWidget.topic = topic
 
+    @classmethod
+    def sort_column(cls, up_down: str) -> None:
+        """Passes sort colum request to the topic renderer."""
+        TopicWidget.topic_renderers[TopicWidget.topic].adjust_sort_column(up_down)
+
+    @classmethod
+    def sort_order(cls, up_down: str) -> None:
+        """Passes sort order request to the topic renderer."""
+        TopicWidget.topic_renderers[TopicWidget.topic].adjust_sort_order(up_down)
+
     def on_mount(self) -> None:
         """Widget initialisation."""
         # Period between refresh attempts

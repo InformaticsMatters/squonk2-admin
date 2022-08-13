@@ -36,7 +36,7 @@ class LogoWidget(Widget):  # type: ignore
     content.append("d", style=common.KEY_VALUE_STYLE)
     content.append("|\n", style=common.LOGO_STYLE)
     content.append(" +-+-+-+-+-+\n", style=common.LOGO_STYLE)
-    version_str: str = f"v{VERSION}"
+    version_str: str = f"{VERSION}"
     version_padding_size: int = len("+-+-+-+-+-+") - len(version_str)
     if version_padding_size < -1:
         version_padding_size = 0
