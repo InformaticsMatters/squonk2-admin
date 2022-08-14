@@ -1,4 +1,5 @@
-pyroma
-pytest
+coverage
 mypy
 pre-commit
+pyroma
+pytest
