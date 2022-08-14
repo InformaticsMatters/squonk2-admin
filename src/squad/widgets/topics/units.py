@@ -94,14 +94,14 @@ class Units(TopicRenderer):
                 self.table.add_row(
                     str(self.table.row_count + 1),
                     common.truncate(row[0], 15),
-                    common.truncate(row[1], 15),
-                    row[2],
+                    row[1],
+                    common.truncate(row[2], 15),
                     row[3],
                     row[4],
                     common.TICK if row[5] else common.CROSS,
                 )
 
-        title: str = f"Units ({self.table.row_count})"
+        title: str = f"Orgs/Units ({self.table.row_count})"
         return Panel(
             self.table if self.table.row_count else Text(),
             title=title,
