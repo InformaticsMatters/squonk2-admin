@@ -7,3 +7,4 @@ src/im_squad.egg-info/
 **/*.log
 **/*.pyc
 **/.DS_Store
+.coverage

@@ -17,15 +17,15 @@ from .base import SortOrder, TopicRenderer
 _COLUMNS: List[Tuple[str, Style, str]] = [
     ("Name", common.NAME_STYLE, "left"),
     ("Creator", common.USER_STYLE, "left"),
-    ("Scope", common.ITEM_KEY_STYLE, "left"),
+    ("Scope", None, "left"),
     ("Scope ID", None, "left"),
     ("Created (UTC)", common.DATE_STYLE, "left"),
     ("Disabled", None, "centre"),
     ("Secret", None, "centre"),
-    ("Merchants", common.MERCHANT_STYLE, "left"),
+    ("Merchants", common.MERCHANT_NAME_STYLE, "left"),
 ]
 
-# Styles for Asset scopes.
+# Local dictionary of styles for Asset 'scopes'.
 _SCOPE_STYLE: Dict[str, Style] = {
     "USER": Style(color="yellow1"),
     "PRODUCT": Style(color="green_yellow"),

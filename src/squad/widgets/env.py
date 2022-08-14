@@ -15,11 +15,12 @@ from squad import common
 from squad.environment import Environment
 from squad.access_token import AccessToken
 
-_ENV_KEY_STYLE: Style = Style(color="orange_red1")
-_ENV_KEY_VALUE_STYLE: Style = Style(color="bright_white")
+_KEY_STYLE: Style = Style(color="orange_red1")
+_KEY_VALUE_STYLE: Style = Style(color="bright_white")
+_VALUE_ERROR_STYLE: Style = Style(color="bright_red", italic=True)
 
 
-class EnvironmentWidget(Widget):  # type: ignore
+class EnvWidget(Widget):  # type: ignore
     """Displays the environment."""
 
     as_access_token: Optional[str] = None
@@ -44,19 +45,19 @@ class EnvironmentWidget(Widget):  # type: ignore
 
         # Get the version of the DM API and the AS API
         as_api_version: str = "Not connected"
-        as_api_version_style: Style = common.KEY_VALUE_ERROR_STYLE
+        as_api_version_style: Style = _VALUE_ERROR_STYLE
         as_ret_val: AsApiRv = AsApi.get_version()
         if as_ret_val.success:
             as_api_version = f"{as_ret_val.msg['version']}"
-            as_api_version_style = common.KEY_VALUE_STYLE
+            as_api_version_style = _KEY_VALUE_STYLE
         as_api_version_value: Text = Text(as_api_version, style=as_api_version_style)
 
         dm_api_version: str = "Not connected"
-        dm_api_version_style: Style = common.KEY_VALUE_ERROR_STYLE
+        dm_api_version_style: Style = _VALUE_ERROR_STYLE
         dm_ret_val: DmApiRv = DmApi.get_version(self.dm_access_token)
         if dm_ret_val.success:
             dm_api_version = f"{dm_ret_val.msg['version']}"
-            dm_api_version_style = common.KEY_VALUE_STYLE
+            dm_api_version_style = _KEY_VALUE_STYLE
         dm_api_version_value: Text = Text(dm_api_version, style=dm_api_version_style)
 
         # Information is presented in a table.
@@ -65,27 +66,25 @@ class EnvironmentWidget(Widget):  # type: ignore
             collapse_padding=True,
             box=None,
         )
-        table.add_column("Key", style=_ENV_KEY_STYLE, no_wrap=True, justify="right")
-        table.add_column("Value", style=_ENV_KEY_VALUE_STYLE, no_wrap=True)
+        table.add_column("Key", style=_KEY_STYLE, no_wrap=True, justify="right")
+        table.add_column("Value", style=_KEY_VALUE_STYLE, no_wrap=True)
 
         # The 'Authentication host' is a special value,
         # it contains a 'tick' or 'cross' depending on whether a
         # DM token was obtained.
-        kc_host = Text(
-            f"{Environment.keycloak_hostname()} ", style=_ENV_KEY_VALUE_STYLE
-        )
+        kc_host = Text(f"{Environment.keycloak_hostname()} ", style=_KEY_VALUE_STYLE)
         if self.dm_access_token:
             kc_host.append(common.TICK)
         else:
             kc_host.append(common.CROSS)
 
         # The API lines are also dynamically styled.
-        if Environment.as_hostname():
-            as_hostname: str = Environment.as_hostname()
-            as_hostname_style: Style = common.KEY_VALUE_STYLE
+        as_hostname: Optional[str] = Environment.as_hostname()
+        if as_hostname:
+            as_hostname_style: Style = _KEY_VALUE_STYLE
         else:
             as_hostname = "(Undefined)"
-            as_hostname_style = common.KEY_VALUE_ERROR_STYLE
+            as_hostname_style = _VALUE_ERROR_STYLE
 
         table.add_row("Env", Environment.environment())
         table.add_row("Auth", kc_host)

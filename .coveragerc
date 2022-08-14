@@ -1,0 +1,11 @@
+[run]
+branch = on
+source = src
+
+[report]
+omit = tests/*.py
+       src/squad/__main__.py
+       src/squad/squad.py
+       **/__init__.py
+       **/site-packages/*.py
+sort = cover

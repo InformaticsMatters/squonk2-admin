@@ -1,3 +1,4 @@
 pyroma
+pytest
 mypy
 pre-commit

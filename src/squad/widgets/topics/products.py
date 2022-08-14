@@ -18,11 +18,11 @@ from .base import SortOrder, TopicRenderer
 
 # List of columns using names, styles and justification
 _COLUMNS: List[Tuple[str, Style, str]] = [
-    ("UID", common.ITEM_KEY_STYLE, "left"),
-    ("Type", common.TYPE_STYLE, "left"),
+    ("UUID", common.UUID_STYLE, "left"),
+    ("Type", common.PRODUCT_TYPE_STYLE, "left"),
     ("Unit", common.NAME_STYLE, "left"),
     ("Name", common.NAME_STYLE, "left"),
-    ("Storage", common.SIZE_STYLE, "right"),
+    ("Storage", common.STORAGE_SIZE_STYLE, "right"),
     ("Coins", common.COIN_STYLE, "right"),
     ("Allowance", common.COIN_STYLE, "right"),
     ("Limit", common.COIN_STYLE, "right"),
@@ -99,9 +99,9 @@ class Products(TopicRenderer):
                 limit: Decimal = Decimal(format(row[7], ".1f"))
                 coins_used_style: Style = common.COIN_STYLE
                 if coins_used > limit:
-                    coins_used_style = common.COIN_LIMIT_STYLE
+                    coins_used_style = common.COIN_OVER_LIMIT_STYLE
                 elif coins_used > allowance:
-                    coins_used_style = common.COIN_OVERSPEND_STYLE
+                    coins_used_style = common.COIN_OVER_ALLOWANCE_STYLE
 
                 # Coins (if greater than zero)
                 if coins_used > Decimal(0):

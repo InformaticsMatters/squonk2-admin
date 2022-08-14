@@ -47,9 +47,9 @@ class UndefinedExchangeRates(TopicRenderer):
             box=None,
         )
         table.add_column("", style=common.INDEX_STYLE, no_wrap=True, justify="right")
-        table.add_column("Collection", style=common.COLLECTION_STYLE, no_wrap=True)
-        table.add_column("Job", style=common.JOB_STYLE, no_wrap=True)
-        table.add_column("Version", style=common.VERSION_STYLE, no_wrap=True)
+        table.add_column("Collection", style=common.JOB_COLLECTION_STYLE, no_wrap=True)
+        table.add_column("Job", style=common.JOB_JOB_STYLE, no_wrap=True)
+        table.add_column("Version", style=common.JOB_VERSION_STYLE, no_wrap=True)
 
         # Use pandas to sort results by collection and job.
         data: Dict[str, List[str]] = {}

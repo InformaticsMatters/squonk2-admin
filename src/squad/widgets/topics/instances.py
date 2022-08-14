@@ -16,12 +16,12 @@ from .base import SortOrder, TopicRenderer
 
 # List of columns using names, styles and justification
 _COLUMNS: List[Tuple[str, Style, str]] = [
-    ("UUID", common.ITEM_KEY_STYLE, "left"),
+    ("UUID", common.UUID_STYLE, "left"),
     ("Name", common.NAME_STYLE, "left"),
     ("Owner", common.USER_STYLE, "left"),
     ("Launched (UTC)", common.DATE_STYLE, "left"),
     ("Phase", common.USER_STYLE, "left"),
-    ("App/Job", common.JOB_STYLE, "left"),
+    ("App/Job", None, "left"),
 ]
 
 # Styles for instance phases.
@@ -87,9 +87,9 @@ class Instances(TopicRenderer):
                 name: str = common.truncate(instance["name"], 15)
                 job: Text = Text(no_wrap=True)
                 if instance["application_type"] == "JOB":
-                    job.append(instance["job_job"], style=common.JOB_STYLE)
-                    job.append("|", style=common.SEPARATOR_STYLE)
-                    job.append(instance["job_version"], style=common.VERSION_STYLE)
+                    job.append(instance["job_job"], style=common.JOB_JOB_STYLE)
+                    job.append("|", style=common.JOB_SEPARATOR_STYLE)
+                    job.append(instance["job_version"], style=common.JOB_VERSION_STYLE)
                 else:
                     # It's an application instance.
                     # Replace the application with something more friendly.
@@ -126,9 +126,9 @@ class Instances(TopicRenderer):
                     app_job_id: Text = Text(app_job[0], style=common.APP_STYLE)
                 else:
                     # It's a job.
-                    app_job_id = Text(app_job[0], style=common.JOB_STYLE)
-                    app_job_id.append("|", style=common.SEPARATOR_STYLE)
-                    app_job_id.append(app_job[1], style=common.VERSION_STYLE)
+                    app_job_id = Text(app_job[0], style=common.JOB_JOB_STYLE)
+                    app_job_id.append("|", style=common.JOB_SEPARATOR_STYLE)
+                    app_job_id.append(app_job[1], style=common.JOB_VERSION_STYLE)
 
                 self.table.add_row(
                     str(self.table.row_count + 1),

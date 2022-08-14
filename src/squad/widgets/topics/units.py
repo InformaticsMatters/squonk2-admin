@@ -18,7 +18,7 @@ from .base import SortOrder, TopicRenderer
 # some styles are dynamic.
 _COLUMNS: List[Tuple[str, Style, str]] = [
     ("Org", common.NAME_STYLE, "left"),
-    ("UUID", common.ITEM_KEY_STYLE, "left"),
+    ("UUID", common.UUID_STYLE, "left"),
     ("Name", common.NAME_STYLE, "left"),
     ("Owner", common.USER_STYLE, "left"),
     ("Created (UTC)", common.DATE_STYLE, "left"),

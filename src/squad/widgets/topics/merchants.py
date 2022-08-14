@@ -19,8 +19,8 @@ _COLUMNS: List[Tuple[str, Style, str]] = [
     ("ID", common.MERCHANT_ID_STYLE, "right"),
     ("Kind", None, "left"),
     ("Created (UTC)", common.DATE_STYLE, "left"),
-    ("Hostname", common.ITEM_KEY_STYLE, "left"),
-    ("Name", common.MERCHANT_STYLE, "left"),
+    ("Hostname", common.HOSTNAME_STYLE, "left"),
+    ("Name", common.MERCHANT_NAME_STYLE, "left"),
 ]
 
 # Styles for instance phases.

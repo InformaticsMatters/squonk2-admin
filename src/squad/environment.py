@@ -11,12 +11,12 @@ from yaml import FullLoader, load
 # directory. It contains 'environments' that define the connection details
 # for the various Keycloak, Data Manager and Account Server services.
 # This default is replaced with the value of the environment variable
-# 'SQUAD_ENVIRONMENT_FILE'.
+# 'SQUAD_ENVIRONMENTS_FILE'.
 #
 # See the project's 'environments' file for an example of the content of the file.
 _ENVIRONMENT_DIRECTORY: str = "~/.squad"
 _ENVIRONMENT_FILE: str = os.environ.get(
-    "SQUAD_ENVIRONMENT_FILE", f"{_ENVIRONMENT_DIRECTORY}/environments"
+    "SQUAD_ENVIRONMENTS_FILE", f"{_ENVIRONMENT_DIRECTORY}/environments"
 )
 
 # The key for the block of environments
@@ -61,11 +61,14 @@ class Environment:
     @classmethod
     def init(cls, name: Optional[str] = None) -> None:
         """Initialisation - loads the environment file,
-        returning values from the environment that's passed int or
+        returning values from the environment that's passed in or
         named in the 'default' key in the file.
         """
         # Regardless, if there is no default environment directory, create one.
-        os.makedirs(os.path.expanduser("~/.squad"), exist_ok=True)
+        # During CI this will fail, so we avoid creating the
+        # directory if CI is set.
+        if not os.environ.get("CI"):
+            os.makedirs(os.path.expanduser("~/.squad"), exist_ok=True)
 
         if not os.path.exists(Environment.__environments_file):
             raise Exception(f"{Environment.__environments_file} does not exist")

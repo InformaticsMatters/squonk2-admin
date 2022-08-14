@@ -66,9 +66,9 @@ directory, in the file ``~/.squad/environments``. If you place your populated
 environments file there you need do nothing else prior to running **SquAd**.
 If you prefer to put your ``environments`` file elsewhere, or have multiple
 files, set the path to your file using the environment variable
-``SQUAD_ENVIRONMENT_FILE``::
+``SQUAD_ENVIRONMENTS_FILE``::
 
-    export SQUAD_ENVIRONMENT_FILE=~/my-squad-environments
+    export SQUAD_ENVIRONMENTS_FILE=~/my-squad-environments
 
 With an environments file in place you can run **SquAd**::
 

@@ -12,7 +12,7 @@ from squonk2.dm_api import DmApi
 from squad import common
 from squad.environment import Environment
 from squad.widgets.logo import LogoWidget
-from squad.widgets.env import EnvironmentWidget
+from squad.widgets.env import EnvWidget
 from squad.widgets.info import InfoWidget
 from squad.widgets.topic import TopicWidget
 
@@ -94,7 +94,7 @@ class Squad(App):  # type: ignore
 
         # Now put the widgets in the grid using the areas we've created.
         grid.place(
-            area1=EnvironmentWidget(),
+            area1=EnvWidget(),
             area2=InfoWidget(),
             area3=LogoWidget(),
             area4=TopicWidget(),

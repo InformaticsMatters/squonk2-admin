@@ -16,10 +16,10 @@ from .base import SortOrder, TopicRenderer
 # List of columns using names, styles and justification.
 # some styles are dynamic.
 _COLUMNS: List[Tuple[str, Style, str]] = [
-    ("ID", common.ITEM_KEY_STYLE, "right"),
+    ("ID", common.UUID_STYLE, "right"),
     ("Time (UTC)", common.DATE_STYLE, "left"),
     ("Severity", None, "left"),
-    ("Summary", common.SIZE_STYLE, "left"),
+    ("Summary", common.MSG_STYLE, "left"),
 ]
 
 

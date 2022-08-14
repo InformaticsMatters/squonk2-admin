@@ -43,10 +43,15 @@ jobs:
         python -m pip install --upgrade build
         pip install -r requirements.txt
         pip install -r build-requirements.txt
-    - name: Static Analysis
+    - name: Static analysis
       run: |
         pre-commit run --all-files
         pyroma .
-    - name: Build
+    - name: Unit test
       run: |
-        python -m build --sdist --wheel --outdir dist/
+        coverage run -m pytest -m unit --strict-markers
+        coverage report -m
+      env:
+        PYTHONPATH: ${PYTHONPATH}:./src
+    - name: Build
+      run: python -m build --sdist --wheel --outdir dist/

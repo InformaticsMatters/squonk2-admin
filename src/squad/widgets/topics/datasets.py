@@ -16,17 +16,17 @@ from .base import SortOrder, TopicRenderer
 
 # List of columns using names, styles and justification
 _COLUMNS: List[Tuple[str, Style, str]] = [
-    ("UID", common.ITEM_KEY_STYLE, "left"),
+    ("UID", common.UUID_STYLE, "left"),
     ("Ver", common.NAME_STYLE, "right"),
     ("Owner", common.USER_STYLE, "left"),
     ("Stage", None, "left"),
     ("Filename", common.NAME_STYLE, "left"),
-    ("Size", common.SIZE_STYLE, "right"),
+    ("Size", common.STORAGE_SIZE_STYLE, "right"),
     ("Published (UTC)", common.DATE_STYLE, "left"),
     ("Used", None, "center"),
 ]
 
-# Styles for instance phases.
+# Local styles for instance phases.
 _STAGE_STYLE: Dict[str, Style] = {
     "FORMATTING": Style(color="light_pink1"),
     "LOADING": Style(color="wheat1"),
@@ -109,7 +109,7 @@ class Datasets(TopicRenderer):
                 # If zero use a cross.
                 used = row[7]
                 if used > 0:
-                    used_text = Text(f"{used}", style=common.USED_STYLE)
+                    used_text = Text(f"{used}", style=common.DATASET_USED_STYLE)
                 else:
                     used_text = common.CROSS
                 size: int = row[5]

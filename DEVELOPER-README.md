@@ -43,10 +43,22 @@ To install the local build, without needing to publish the package run: -
 
     pip install dist/im-squad-*.tar.gz
 
+And to uninstall...
+
+    pip uninstall im-squad -y
+
+## Testing
+We use [coverage] and [pytest] to test the project.
+You can run the unit tests with: -
+
+    PYTHONPATH=./src coverage run -m pytest -m unit --strict-markers
+    coverage report -m
+
 ---
 
 [black]: https://black.readthedocs.io/en/stable
 [commitizen]: https://commitizen-tools.github.io/commitizen/
 [conventional commit]: https://www.conventionalcommits.org/en/v1.0.0/
 [pre-commit]: https://pre-commit.com
+[pytest]: https://docs.pytest.org/en/7.1.x/contents.html
 [python packaging]: https://packaging.python.org/en/latest/tutorials/packaging-projects/
