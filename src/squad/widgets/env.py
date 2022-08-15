@@ -44,7 +44,7 @@ class EnvWidget(Widget):  # type: ignore
         )
 
         # Get the version of the DM API and the AS API
-        as_api_version: str = "Not connected"
+        as_api_version: str = "Not available"
         as_api_version_style: Style = _VALUE_ERROR_STYLE
         as_ret_val: AsApiRv = AsApi.get_version()
         if as_ret_val.success:
@@ -52,7 +52,7 @@ class EnvWidget(Widget):  # type: ignore
             as_api_version_style = _KEY_VALUE_STYLE
         as_api_version_value: Text = Text(as_api_version, style=as_api_version_style)
 
-        dm_api_version: str = "Not connected"
+        dm_api_version: str = "Not available"
         dm_api_version_style: Style = _VALUE_ERROR_STYLE
         dm_ret_val: DmApiRv = DmApi.get_version(self.dm_access_token)
         if dm_ret_val.success:
