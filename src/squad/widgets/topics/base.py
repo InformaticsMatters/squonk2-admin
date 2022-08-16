@@ -55,6 +55,7 @@ class TopicRenderer(ABC):
             collapse_padding=True,
             box=box.ASCII2,
             expand=True,
+            pad_edge=False,
         )
         self.table.add_column(
             "", style=common.INDEX_STYLE, no_wrap=True, justify="right"
