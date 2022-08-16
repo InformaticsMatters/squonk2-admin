@@ -13,6 +13,7 @@ from squad.widgets.topics.assets import Assets
 from squad.widgets.topics.datasets import Datasets
 from squad.widgets.topics.defined_exchange_rates import DefinedExchangeRates
 from squad.widgets.topics.instances import Instances
+from squad.widgets.topics.tasks import Tasks
 from squad.widgets.topics.merchants import Merchants
 from squad.widgets.topics.products import Products
 from squad.widgets.topics.projects import Projects
@@ -33,6 +34,7 @@ class TopicWidget(Widget):  # type: ignore
         "datasets": Datasets(),
         "defined-exchange-rates": DefinedExchangeRates(),
         "instances": Instances(),
+        "tasks": Tasks(),
         "merchants": Merchants(),
         "products": Products(),
         "projects": Projects(),

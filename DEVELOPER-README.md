@@ -54,6 +54,9 @@ You can run the unit tests with: -
     PYTHONPATH=./src coverage run -m pytest -m unit --strict-markers
     coverage report -m
 
+> If you've installed **SquAd** you will need to uninstall it
+  with `pip uninstall im-squad -y` before running any tests.
+
 ---
 
 [black]: https://black.readthedocs.io/en/stable

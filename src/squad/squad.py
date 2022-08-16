@@ -32,6 +32,7 @@ class Squad(App):  # type: ignore
         await self.bind("a", "topic('assets')")
         await self.bind("d", "topic('datasets')")
         await self.bind("i", "topic('instances')")
+        await self.bind("k", "topic('tasks')")
         await self.bind("m", "topic('merchants')")
         await self.bind("n", "topic('personal-units')")
         await self.bind("o", "topic('units')")

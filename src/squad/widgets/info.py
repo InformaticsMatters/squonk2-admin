@@ -57,8 +57,9 @@ class InfoWidget(Widget):  # type: ignore
             "Sort order",
         )
         table.add_row("", "", "<i>", "Instances", "<t>", "Products")
-        table.add_row("", "", "<r>", "Defined exchange rates", "<a>", "Assets")
-        table.add_row("", "", "<u>", "Undefined exchange rates", "<m>", "Merchants")
+        table.add_row("", "", "<k>", "Tasks", "<a>", "Assets")
+        table.add_row("", "", "<r>", "Defined exchange rates", "<m>", "Merchants")
+        table.add_row("", "", "<u>", "Undefined exchange rates", "", "")
         table.add_row("", "", "<s>", "Service errors", "", "")
 
         return Panel(

@@ -109,9 +109,6 @@ class Instances(TopicRenderer):
                 row_number += 1
 
         if data:
-            # Create a data-frame and sort on 'launched' date (descending)
-            # This will ensuer the most recently launched instance
-            # is at the top of the list.
             data_frame: pandas.DataFrame = pandas.DataFrame.from_dict(
                 data, orient="index"
             )

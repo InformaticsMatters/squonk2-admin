@@ -5,7 +5,7 @@ from rich.text import Text
 import textual
 
 # The height and width of widgets in out 'banner' region.
-BANNER_HEIGHT: int = 8
+BANNER_HEIGHT: int = 9
 BANNER_ENVIRONMENT_WIDTH: int = 54
 BANNER_LOGO_WIDTH: int = 14
 
@@ -25,13 +25,15 @@ DATE_STYLE: Style = Style(color="honeydew2")
 UUID_STYLE: Style = Style(color="deep_sky_blue1")
 # Style for storage values
 STORAGE_SIZE_STYLE: Style = Style(color="green3")
-# Styles for Application IDs, Jopb collections, jobs and versions
+# Styles for Application IDs, Job collections, jobs and versions
 APP_STYLE: Style = Style(color="cyan1")
 JOB_COLLECTION_STYLE: Style = Style(color="plum1")
 JOB_JOB_STYLE: Style = Style(color="magenta1")
 JOB_VERSION_STYLE: Style = Style(color="wheat1")
 JOB_SEPARATOR_STYLE: Style = Style(color="grey89")
 JOB_RATE_STYLE: Style = Style(color="gold1", italic=True)
+# Styles for Tasks
+TASK_PURPOSE_VERSION_STYLE: Style = Style(color="dark_khaki")
 # Style for product types, and coins
 PRODUCT_TYPE_STYLE: Style = Style(color="light_slate_grey")
 COIN_STYLE: Style = Style(color="yellow1", italic=True)
