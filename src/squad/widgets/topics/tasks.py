@@ -108,15 +108,13 @@ class Tasks(TopicRenderer):
                 # Green or red.
                 # But cater for unset codes.
                 exit_code: int = row[6]
+                exit_code_str = str(exit_code)
                 exit_code_style: Style = Style(color="green1")
                 if exit_code == _UNSET_EXIT_CODE:
+                    exit_code_str = "-"
                     exit_code_style = Style(color="bright_black")
                 elif exit_code != 0:
-                    exit_code_style = Style(color="bright_red")
-                if exit_code == _UNSET_EXIT_CODE:
-                    exit_code_str: str = "-"
-                else:
-                    exit_code_str = str(exit_code)
+                    exit_code_style = Style(color="bright_red", reverse=True)
                 # Populate the row...
                 self.table.add_row(
                     str(self.table.row_count + 1),
