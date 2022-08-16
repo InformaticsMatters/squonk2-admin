@@ -101,8 +101,6 @@ class Merchants(TopicRenderer):
 
         title: str = f"Merchants ({self.table.row_count})"
         return Panel(
-            self.table if self.table.row_count else Text(),
+            self.table,
             title=title,
-            style=common.CORE_STYLE,
-            padding=0,
         )

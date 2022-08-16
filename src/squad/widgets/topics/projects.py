@@ -7,7 +7,6 @@ import humanize
 import pandas
 from rich.panel import Panel
 from rich.style import Style
-from rich.text import Text
 
 from squonk2.dm_api import DmApi
 
@@ -97,8 +96,6 @@ class Projects(TopicRenderer):
         total_size_human: str = humanize.naturalsize(total_size_bytes, binary=True)
         title: str = f"Projects ({self.table.row_count}) [{total_size_human}]"
         return Panel(
-            self.table if self.table.row_count else Text(),
+            self.table,
             title=title,
-            style=common.CORE_STYLE,
-            padding=0,
         )

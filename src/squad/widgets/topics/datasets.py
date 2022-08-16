@@ -17,7 +17,7 @@ from .base import SortOrder, TopicRenderer
 # List of columns using names, styles and justification
 _COLUMNS: List[Tuple[str, Style, str]] = [
     ("UID", common.UUID_STYLE, "left"),
-    ("Ver", common.NAME_STYLE, "right"),
+    ("Ver", common.NAME_STYLE, "left"),
     ("Owner", common.USER_STYLE, "left"),
     ("Stage", None, "left"),
     ("Filename", common.NAME_STYLE, "left"),
@@ -129,8 +129,6 @@ class Datasets(TopicRenderer):
         total_size_human: str = humanize.naturalsize(total_size_bytes, binary=True)
         title: str = f"Datasets ({self.table.row_count}) [{total_size_human}]"
         return Panel(
-            self.table if self.table.row_count else Text(),
+            self.table,
             title=title,
-            style=common.CORE_STYLE,
-            padding=0,
         )

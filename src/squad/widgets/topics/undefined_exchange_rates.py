@@ -1,21 +1,32 @@
 """A textual widget used to display DM Exchange Rate information.
 """
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import pandas
 from rich.panel import Panel
-from rich.table import Table
-from rich.text import Text
+from rich.style import Style
 from squonk2.dm_api import DmApi
 
 from squad import common
 from squad.access_token import AccessToken
-from .base import TopicRenderer
+from .base import SortOrder, TopicRenderer
+
+# List of columns using names, styles and justification
+_COLUMNS: List[Tuple[str, Style, str]] = [
+    ("Collection", common.JOB_COLLECTION_STYLE, "right"),
+    ("Job", common.JOB_JOB_STYLE, "left"),
+    ("Version", common.JOB_VERSION_STYLE, "left"),
+]
 
 
 class UndefinedExchangeRates(TopicRenderer):
     """Displays Job Exchange Rates that have no exchange rate."""
+
+    def __init__(self) -> None:
+        # Default sort column
+        self.num_columns = len(_COLUMNS)
+        self.sort_column = 0
 
     def render(self) -> Panel:
         """Render the widget."""
@@ -40,16 +51,9 @@ class UndefinedExchangeRates(TopicRenderer):
             else:
                 self.last_response = None
 
-        # Results are presented in a table.
-        table: Table = Table(
-            collapse_padding=True,
-            header_style=common.INDEX_STYLE,
-            box=None,
-        )
-        table.add_column("", style=common.INDEX_STYLE, no_wrap=True, justify="right")
-        table.add_column("Collection", style=common.JOB_COLLECTION_STYLE, no_wrap=True)
-        table.add_column("Job", style=common.JOB_JOB_STYLE, no_wrap=True)
-        table.add_column("Version", style=common.JOB_VERSION_STYLE, no_wrap=True)
+        # Results in a table.
+        self.prepare_table(_COLUMNS)
+        assert self.table
 
         # Use pandas to sort results by collection and job.
         data: Dict[str, List[str]] = {}
@@ -68,22 +72,19 @@ class UndefinedExchangeRates(TopicRenderer):
             data_frame: pandas.DataFrame = pandas.DataFrame.from_dict(
                 data, orient="index"
             )
-            cur_collection: str = ""
-            for _, row in data_frame.sort_values(by=[0, 1]).iterrows():
-                collection: str = ""
-                if row[0] != cur_collection:
-                    cur_collection = row[0]
-                    collection = cur_collection
-                table.add_row(
-                    str(table.row_count + 1),
-                    collection,
+            for _, row in data_frame.sort_values(
+                by=[self.sort_column], ascending=self.sort_order == SortOrder.ASCENDING
+            ).iterrows():
+                self.table.add_row(
+                    str(self.table.row_count + 1),
+                    row[0],
                     row[1],
                     row[2],
                 )
 
-        title: str = f"Undefined exchange rates ({table.row_count})"
+        title: str = f"Undefined exchange rates ({self.table.row_count})"
         return Panel(
-            table if table.row_count else Text(),
+            self.table,
             title=title,
             style=common.CORE_STYLE,
             padding=0,

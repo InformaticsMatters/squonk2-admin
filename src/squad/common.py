@@ -10,7 +10,7 @@ BANNER_ENVIRONMENT_WIDTH: int = 54
 BANNER_LOGO_WIDTH: int = 14
 
 # Styles
-CORE_STYLE: Style = Style(color="grey70", bgcolor="black")
+CORE_STYLE: Style = Style(color="grey70", bgcolor="black", bold=True)
 
 # General styles, used in more than one topic renderer.
 HOSTNAME_STYLE: Style = Style(color="cornflower_blue")

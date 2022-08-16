@@ -4,10 +4,11 @@ depending on what key the user has hit.
 """
 from typing import Dict
 
+from rich import box
 from rich.panel import Panel
 from textual.widget import Widget
 
-from squad.common import log_warning
+from squad.common import log_warning, CORE_STYLE
 from squad.widgets.topics.base import TopicRenderer
 from squad.widgets.topics.assets import Assets
 from squad.widgets.topics.datasets import Datasets
@@ -74,6 +75,13 @@ class TopicWidget(Widget):  # type: ignore
 
     def render(self) -> Panel:
         """Render the widget using the prevailing topic."""
-
         assert TopicWidget.topic in TopicWidget.topic_renderers
-        return TopicWidget.topic_renderers[TopicWidget.topic].render()
+
+        # The chosen render returns a Panel.
+        # To avodk each renderer having to set the Panel box,
+        # we do it here.
+        panel: Panel = TopicWidget.topic_renderers[TopicWidget.topic].render()
+        panel.box = box.SIMPLE
+        panel.style = CORE_STYLE
+        panel.padding = 0
+        return panel

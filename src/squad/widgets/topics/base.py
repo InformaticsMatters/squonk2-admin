@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 from typing import List, Optional, Tuple, Union
 
+from rich import box
 from rich.panel import Panel
 from rich.style import Style
 from rich.table import Table
@@ -52,7 +53,8 @@ class TopicRenderer(ABC):
         # Results in a table.
         self.table = Table(
             collapse_padding=True,
-            box=None,
+            box=box.ASCII2,
+            expand=True,
         )
         self.table.add_column(
             "", style=common.INDEX_STYLE, no_wrap=True, justify="right"

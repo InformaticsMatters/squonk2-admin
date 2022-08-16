@@ -6,7 +6,6 @@ from typing import Any, Dict, List, Tuple
 import pandas
 from rich.panel import Panel
 from rich.style import Style
-from rich.text import Text
 
 from squonk2.as_api import AsApi
 
@@ -96,8 +95,6 @@ class PersonalUnits(TopicRenderer):
 
         title: str = f"Personal units ({self.table.row_count})"
         return Panel(
-            self.table if self.table.row_count else Text(),
+            self.table,
             title=title,
-            style=common.CORE_STYLE,
-            padding=0,
         )
