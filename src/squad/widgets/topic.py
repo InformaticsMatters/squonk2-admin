@@ -78,7 +78,7 @@ class TopicWidget(Widget):  # type: ignore
         assert TopicWidget.topic in TopicWidget.topic_renderers
 
         # The chosen render returns a Panel.
-        # To avodk each renderer having to set the Panel box,
+        # To avoid each renderer having to set the Panel box,
         # we do it here.
         panel: Panel = TopicWidget.topic_renderers[TopicWidget.topic].render()
         panel.box = box.SIMPLE

@@ -24,6 +24,8 @@ _COLUMNS: List[Tuple[str, Style, str]] = [
     ("Name", common.NAME_STYLE, "left"),
     ("Storage", common.STORAGE_SIZE_STYLE, "right"),
     ("Coins", common.COIN_STYLE, "right"),
+    ("Burn", common.COIN_STYLE, "right"),
+    ("Prediction", common.COIN_STYLE, "right"),
     ("Allowance", common.COIN_STYLE, "right"),
     ("Limit", common.COIN_STYLE, "right"),
 ]
@@ -81,6 +83,8 @@ class Products(TopicRenderer):
                     product["product"]["name"],
                     size,
                     Decimal(product["coins"]["used"]),
+                    Decimal(product["coins"]["current_burn_rate"]),
+                    Decimal(product["coins"]["billing_prediction"]),
                     Decimal(product["coins"]["allowance"]),
                     Decimal(product["coins"]["limit"]),
                 ]
@@ -95,15 +99,22 @@ class Products(TopicRenderer):
                 by=[self.sort_column], ascending=self.sort_order == SortOrder.ASCENDING
             ).iterrows():
                 coins_used: Decimal = Decimal(format(row[5], ".1f"))
-                allowance: Decimal = Decimal(format(row[6], ".1f"))
-                limit: Decimal = Decimal(format(row[7], ".1f"))
+                burn: Decimal = Decimal(format(row[6], ".1f"))
+                prediction: Decimal = Decimal(format(row[7], ".1f"))
+                allowance: Decimal = Decimal(format(row[8], ".1f"))
+                limit: Decimal = Decimal(format(row[9], ".1f"))
                 coins_used_style: Style = common.COIN_STYLE
                 if coins_used > limit:
                     coins_used_style = common.COIN_OVER_LIMIT_STYLE
                 elif coins_used > allowance:
                     coins_used_style = common.COIN_OVER_ALLOWANCE_STYLE
+                if prediction > limit:
+                    prediction_style = common.COIN_OVER_LIMIT_STYLE
+                elif prediction > allowance:
+                    prediction_style = common.COIN_OVER_ALLOWANCE_STYLE
 
                 # Coins (if greater than zero)
+                # Blank otherwise
                 if coins_used > Decimal(0):
                     coins: Text = Text(
                         humanize.intcomma(coins_used),
@@ -111,6 +122,25 @@ class Products(TopicRenderer):
                     )
                 else:
                     coins = Text("")
+
+                # Burn-Rate Coins (if greater than zero)
+                # Blank otherwise
+                if burn > Decimal(0):
+                    burn_coins: Text = Text(
+                        humanize.intcomma(burn),
+                    )
+                else:
+                    burn_coins = Text("")
+
+                # Prediction Coins (if greater than zero)
+                # Blank otherwise
+                if prediction > Decimal(0):
+                    prediction_coins: Text = Text(
+                        humanize.intcomma(prediction),
+                        style=prediction_style,
+                    )
+                else:
+                    prediction_coins = Text("")
 
                 self.table.add_row(
                     str(self.table.row_count + 1),
@@ -120,6 +150,8 @@ class Products(TopicRenderer):
                     common.truncate(row[3], common.NAME_LENGTH),
                     row[4],
                     coins,
+                    burn_coins,
+                    prediction_coins,
                     humanize.intcomma(allowance),
                     humanize.intcomma(limit),
                 )

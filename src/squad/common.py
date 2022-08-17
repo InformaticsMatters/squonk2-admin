@@ -41,7 +41,7 @@ TASK_PURPOSE_VERSION_STYLE: Style = Style(color="dark_khaki")
 # Style for product types, and coins
 PRODUCT_TYPE_STYLE: Style = Style(color="light_slate_grey")
 COIN_STYLE: Style = Style(color="yellow1", italic=True)
-COIN_OVER_ALLOWANCE_STYLE: Style = Style(color="yellow1", bgcolor="dark_goldenrod")
+COIN_OVER_ALLOWANCE_STYLE: Style = Style(color="yellow1", bgcolor="dark_orange")
 COIN_OVER_LIMIT_STYLE: Style = Style(color="yellow1", bgcolor="deep_pink2")
 # Style for messages
 MSG_STYLE: Style = Style(color="cyan3")
