@@ -22,9 +22,10 @@ _COLUMNS: List[Tuple[str, Style, str]] = [
     ("Type", common.PRODUCT_TYPE_STYLE, "left"),
     ("Unit", common.NAME_STYLE, "left"),
     ("Name", common.NAME_STYLE, "left"),
+    ("Reset", common.COIN_RESET_STYLE, "right"),
     ("Storage", common.STORAGE_SIZE_STYLE, "right"),
-    ("Coins", common.COIN_STYLE, "right"),
     ("Burn", common.COIN_STYLE, "right"),
+    ("Coins", common.COIN_STYLE, "right"),
     ("Prediction", common.COIN_STYLE, "right"),
     ("Allowance", common.COIN_STYLE, "right"),
     ("Limit", common.COIN_STYLE, "right"),
@@ -37,7 +38,7 @@ class Products(TopicRenderer):
     def __init__(self) -> None:
         # Default sort column
         self.num_columns = len(_COLUMNS)
-        self.sort_column = 5
+        self.sort_column = 8
 
     def render(self) -> Panel:
         """Render the widget."""
@@ -81,9 +82,10 @@ class Products(TopicRenderer):
                     product["product"]["type"],
                     product["unit"]["name"],
                     product["product"]["name"],
+                    product["coins"]["remaining_days"],
                     size,
-                    Decimal(product["coins"]["used"]),
                     Decimal(product["coins"]["current_burn_rate"]),
+                    Decimal(product["coins"]["used"]),
                     Decimal(product["coins"]["billing_prediction"]),
                     Decimal(product["coins"]["allowance"]),
                     Decimal(product["coins"]["limit"]),
@@ -98,20 +100,34 @@ class Products(TopicRenderer):
             for _, row in data_frame.sort_values(
                 by=[self.sort_column], ascending=self.sort_order == SortOrder.ASCENDING
             ).iterrows():
-                coins_used: Decimal = Decimal(format(row[5], ".1f"))
+                # Get data back out of the frame,
+                # realising that pandas wil have all sorts of floating point
+                # precision issues!
                 burn: Decimal = Decimal(format(row[6], ".1f"))
-                prediction: Decimal = Decimal(format(row[7], ".1f"))
-                allowance: Decimal = Decimal(format(row[8], ".1f"))
-                limit: Decimal = Decimal(format(row[9], ".1f"))
+                coins_used: Decimal = Decimal(format(row[7], ".1f"))
+                prediction: Decimal = Decimal(format(row[8], ".1f"))
+                allowance: Decimal = Decimal(format(row[9], ".1f"))
+                limit: Decimal = Decimal(format(row[10], ".1f"))
+
                 coins_used_style: Style = common.COIN_STYLE
                 if coins_used > limit:
                     coins_used_style = common.COIN_OVER_LIMIT_STYLE
                 elif coins_used > allowance:
                     coins_used_style = common.COIN_OVER_ALLOWANCE_STYLE
+                prediction_style: Style = common.COIN_STYLE
                 if prediction > limit:
                     prediction_style = common.COIN_OVER_LIMIT_STYLE
                 elif prediction > allowance:
                     prediction_style = common.COIN_OVER_ALLOWANCE_STYLE
+
+                # Burn-Rate Coins (if greater than zero)
+                # Blank otherwise
+                if burn > Decimal(0):
+                    burn_coins: Text = Text(
+                        humanize.intcomma(burn),
+                    )
+                else:
+                    burn_coins = Text("")
 
                 # Coins (if greater than zero)
                 # Blank otherwise
@@ -122,15 +138,6 @@ class Products(TopicRenderer):
                     )
                 else:
                     coins = Text("")
-
-                # Burn-Rate Coins (if greater than zero)
-                # Blank otherwise
-                if burn > Decimal(0):
-                    burn_coins: Text = Text(
-                        humanize.intcomma(burn),
-                    )
-                else:
-                    burn_coins = Text("")
 
                 # Prediction Coins (if greater than zero)
                 # Blank otherwise
@@ -148,9 +155,10 @@ class Products(TopicRenderer):
                     row[1],
                     common.truncate(row[2], common.NAME_LENGTH),
                     common.truncate(row[3], common.NAME_LENGTH),
-                    row[4],
-                    coins,
+                    str(row[4]),
+                    row[5],
                     burn_coins,
+                    coins,
                     prediction_coins,
                     humanize.intcomma(allowance),
                     humanize.intcomma(limit),
