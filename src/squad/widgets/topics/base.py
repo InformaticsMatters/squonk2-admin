@@ -75,11 +75,13 @@ class TopicRenderer(ABC):
                     name += " \u25bc"
                 header_style = Style.combine([header_style, common.REVERSE])
             c_index += 1
+            # Justification is centered by default.
+            justify: str = item[2] if item[2] else "center"
             self.table.add_column(
                 name,
                 style=item[1],
                 no_wrap=True,
-                justify=item[2],
+                justify=justify,
                 header_style=header_style,
             )
 

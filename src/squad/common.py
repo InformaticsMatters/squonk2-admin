@@ -9,6 +9,10 @@ BANNER_HEIGHT: int = 9
 BANNER_ENVIRONMENT_WIDTH: int = 54
 BANNER_LOGO_WIDTH: int = 14
 
+# Length to truncate names to.
+# "Informatics Matters" is 19 characters.
+NAME_LENGTH: int = 20
+
 # Styles
 CORE_STYLE: Style = Style(color="grey54", bgcolor="black", bold=True)
 

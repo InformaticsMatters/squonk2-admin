@@ -92,9 +92,9 @@ class Units(TopicRenderer):
             ).iterrows():
                 self.table.add_row(
                     str(self.table.row_count + 1),
-                    common.truncate(row[0], 15),
+                    common.truncate(row[0], common.NAME_LENGTH),
                     row[1],
-                    common.truncate(row[2], 15),
+                    common.truncate(row[2], common.NAME_LENGTH),
                     row[3],
                     row[4],
                     common.TICK if row[5] else common.CROSS,

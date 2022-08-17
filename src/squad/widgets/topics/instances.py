@@ -84,7 +84,7 @@ class Instances(TopicRenderer):
         row_number: int = 1
         if self.last_response and self.last_response.success:
             for instance in self.last_response.msg["instances"]:
-                name: str = common.truncate(instance["name"], 15)
+                name: str = common.truncate(instance["name"], common.NAME_LENGTH)
                 job: Text = Text(no_wrap=True)
                 if instance["application_type"] == "JOB":
                     job.append(instance["job_job"], style=common.JOB_JOB_STYLE)

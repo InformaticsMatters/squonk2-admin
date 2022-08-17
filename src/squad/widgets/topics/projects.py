@@ -14,7 +14,7 @@ from squad import common
 from squad.access_token import AccessToken
 from .base import SortOrder, TopicRenderer
 
-# List of columns using names, styles and justification
+# List of columns using names, styles and justification (centred by default)
 _COLUMNS: List[Tuple[str, Style, str]] = [
     ("UUID", common.UUID_STYLE, "left"),
     ("Name", common.NAME_STYLE, "left"),
@@ -88,7 +88,7 @@ class Projects(TopicRenderer):
                 self.table.add_row(
                     str(self.table.row_count + 1),
                     row[0],
-                    common.truncate(row[1], 15),
+                    common.truncate(row[1], common.NAME_LENGTH),
                     row[2],
                     size_str,
                 )

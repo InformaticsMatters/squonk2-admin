@@ -105,7 +105,7 @@ class Assets(TopicRenderer):
                 scope: str = row[2]
                 self.table.add_row(
                     str(self.table.row_count + 1),
-                    common.truncate(row[0], 15),
+                    common.truncate(row[0], common.NAME_LENGTH),
                     row[1],
                     Text(
                         scope,
