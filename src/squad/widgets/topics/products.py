@@ -22,7 +22,8 @@ _COLUMNS: List[Tuple[str, Style, str]] = [
     ("Type", common.PRODUCT_TYPE_STYLE, "left"),
     ("Unit", common.NAME_STYLE, "left"),
     ("Name", common.NAME_STYLE, "left"),
-    ("BillOn", common.COIN_RESET_STYLE, "right"),
+    ("On", common.COIN_DAY_STYLE, "right"),
+    ("In", common.COIN_RESET_STYLE, "right"),
     ("Storage", common.STORAGE_SIZE_STYLE, "right"),
     ("Burn", common.COIN_STYLE, "right"),
     ("Coins", common.COIN_STYLE, "right"),
@@ -83,6 +84,7 @@ class Products(TopicRenderer):
                     product["unit"]["name"],
                     product["product"]["name"],
                     humanize.ordinal(product["coins"]["billing_day"]),
+                    product["coins"]["remaining_days"],
                     size,
                     Decimal(product["coins"]["current_burn_rate"]),
                     Decimal(product["coins"]["used"]),
@@ -103,11 +105,11 @@ class Products(TopicRenderer):
                 # Get data back out of the frame,
                 # realising that pandas wil have all sorts of floating point
                 # precision issues!
-                burn: Decimal = Decimal(format(row[6], ".1f"))
-                coins_used: Decimal = Decimal(format(row[7], ".1f"))
-                prediction: Decimal = Decimal(format(row[8], ".1f"))
-                allowance: Decimal = Decimal(format(row[9], ".1f"))
-                limit: Decimal = Decimal(format(row[10], ".1f"))
+                burn: Decimal = Decimal(format(row[7], ".1f"))
+                coins_used: Decimal = Decimal(format(row[8], ".1f"))
+                prediction: Decimal = Decimal(format(row[9], ".1f"))
+                allowance: Decimal = Decimal(format(row[10], ".1f"))
+                limit: Decimal = Decimal(format(row[11], ".1f"))
 
                 coins_used_style: Style = common.COIN_STYLE
                 if coins_used > limit:
@@ -156,7 +158,8 @@ class Products(TopicRenderer):
                     common.truncate(row[2], common.NAME_LENGTH),
                     common.truncate(row[3], common.NAME_LENGTH),
                     str(row[4]),
-                    row[5],
+                    str(row[5]),
+                    row[6],
                     burn_coins,
                     coins,
                     prediction_coins,
