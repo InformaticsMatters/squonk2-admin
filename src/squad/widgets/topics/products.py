@@ -25,6 +25,7 @@ _COLUMNS: List[Tuple[str, Style, str]] = [
     ("On", common.COIN_DAY_STYLE, "right"),
     ("In", common.COIN_RESET_STYLE, "right"),
     ("Storage", common.STORAGE_SIZE_STYLE, "right"),
+    ("Claim", common.NAME_STYLE, "left"),
     ("Burn", common.COIN_STYLE, "right"),
     ("Coins", common.COIN_STYLE, "right"),
     ("Prediction", common.COIN_STYLE, "right"),
@@ -73,6 +74,10 @@ class Products(TopicRenderer):
         row_number: int = 1
         if self.last_response and self.last_response.success:
             for product in self.last_response.msg["products"]:
+                # A claim?
+                p_claim: str = ""
+                if "claim" in product and "name" in product["claim"]:
+                    p_claim = product["claim"]["name"]
                 # A size (or blank)?
                 if product["storage"]["size"]["current"] == "0 Bytes":
                     size: str = ""
@@ -86,6 +91,7 @@ class Products(TopicRenderer):
                     humanize.ordinal(product["coins"]["billing_day"]),
                     product["coins"]["remaining_days"],
                     size,
+                    p_claim,
                     Decimal(product["coins"]["current_burn_rate"]),
                     Decimal(product["coins"]["used"]),
                     Decimal(product["coins"]["billing_prediction"]),
@@ -102,14 +108,20 @@ class Products(TopicRenderer):
             for _, row in data_frame.sort_values(
                 by=[self.sort_column], ascending=self.sort_order == SortOrder.ASCENDING
             ).iterrows():
+
+                if row[7]:
+                    claim: Text = Text(common.truncate(row[7], common.NAME_LENGTH))
+                else:
+                    claim = common.CROSS
+
                 # Get data back out of the frame,
                 # realising that pandas wil have all sorts of floating point
                 # precision issues!
-                burn: Decimal = Decimal(format(row[7], ".1f"))
-                coins_used: Decimal = Decimal(format(row[8], ".1f"))
-                prediction: Decimal = Decimal(format(row[9], ".1f"))
-                allowance: Decimal = Decimal(format(row[10], ".1f"))
-                limit: Decimal = Decimal(format(row[11], ".1f"))
+                burn: Decimal = Decimal(format(row[8], ".1f"))
+                coins_used: Decimal = Decimal(format(row[9], ".1f"))
+                prediction: Decimal = Decimal(format(row[10], ".1f"))
+                allowance: Decimal = Decimal(format(row[11], ".1f"))
+                limit: Decimal = Decimal(format(row[12], ".1f"))
 
                 coins_used_style: Style = common.COIN_STYLE
                 if coins_used > limit:
@@ -160,6 +172,7 @@ class Products(TopicRenderer):
                     str(row[4]),
                     str(row[5]),
                     row[6],
+                    claim,
                     burn_coins,
                     coins,
                     prediction_coins,
