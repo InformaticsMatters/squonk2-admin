@@ -40,7 +40,7 @@ class Products(TopicRenderer):
     def __init__(self) -> None:
         # Default sort column
         self.num_columns = len(_COLUMNS)
-        self.sort_column = 8
+        self.sort_column = 9
 
     def render(self) -> Panel:
         """Render the widget."""

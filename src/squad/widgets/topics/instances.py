@@ -44,7 +44,7 @@ class Instances(TopicRenderer):
     def __init__(self) -> None:
         # Default sort column
         self.num_columns = len(_COLUMNS)
-        self.sort_column = 3
+        self.sort_column = 4
 
     def render(self) -> Panel:
         """Render the widget."""
