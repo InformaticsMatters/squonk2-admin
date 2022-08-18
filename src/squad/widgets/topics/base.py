@@ -53,7 +53,7 @@ class TopicRenderer(ABC):
         # Results in a table.
         self.table = Table(
             collapse_padding=True,
-            box=box.ASCII2,
+            box=box.ASCII,
             expand=True,
             padding=(0, 0),
             pad_edge=False,
