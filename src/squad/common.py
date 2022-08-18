@@ -59,9 +59,8 @@ DATASET_USED_STYLE: Style = Style(color="blue1")
 REVERSE: Style = Style(reverse=True)
 
 # Text icons.
-# Predefined/common text items
-TICK: Text = Text("\u2705", style=Style(color="green3", bold=True, italic=True))
-CROSS: Text = Text("\u274c", style=Style(color="red3", bold=True, italic=True))
+TICK: Text = Text("\u2714", style=Style(color="green3", bold=True))
+CROSS: Text = Text("\u02df", style=Style(color="red3", bold=True))
 
 
 def log_info(msg: str) -> None:
