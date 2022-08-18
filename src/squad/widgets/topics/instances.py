@@ -17,6 +17,7 @@ from .base import SortOrder, TopicRenderer
 # List of columns using names, styles and justification
 _COLUMNS: List[Tuple[str, Style, str]] = [
     ("UUID", common.UUID_STYLE, "left"),
+    ("Archived", None, "center"),
     ("Name", common.NAME_STYLE, "left"),
     ("Owner", common.USER_STYLE, "left"),
     ("Launched (UTC)", common.DATE_STYLE, "left"),
@@ -84,6 +85,9 @@ class Instances(TopicRenderer):
         row_number: int = 1
         if self.last_response and self.last_response.success:
             for instance in self.last_response.msg["instances"]:
+                archived: bool = False
+                if "archived" in instance and instance["archived"]:
+                    archived = True
                 name: str = common.truncate(instance["name"], common.NAME_LENGTH)
                 job: Text = Text(no_wrap=True)
                 if instance["application_type"] == "JOB":
@@ -100,6 +104,7 @@ class Instances(TopicRenderer):
                         job.append(app_id, style=common.APP_STYLE)
                 data[f"{row_number}"] = [
                     instance["id"],
+                    archived,
                     name,
                     instance["owner"],
                     instance["launched"],
@@ -115,9 +120,9 @@ class Instances(TopicRenderer):
             for _, row in data_frame.sort_values(
                 by=[self.sort_column], ascending=self.sort_order == SortOrder.ASCENDING
             ).iterrows():
-                phase: str = row[4]
+                phase: str = row[5]
                 # Identify App/Job for prettier rendering.
-                app_job: List[str] = row[5].split("|")
+                app_job: List[str] = row[6].split("|")
                 if len(app_job) == 1:
                     # It's an application.
                     app_job_id: Text = Text(app_job[0], style=common.APP_STYLE)
@@ -130,9 +135,10 @@ class Instances(TopicRenderer):
                 self.table.add_row(
                     str(self.table.row_count + 1),
                     row[0],
-                    row[1],
+                    common.TICK if row[1] else common.CROSS,
                     row[2],
                     row[3],
+                    row[4],
                     Text(phase, style=_PHASE_STYLE.get(phase, _DEFAULT_PHASE_STYLE)),
                     app_job_id,
                 )

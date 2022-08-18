@@ -60,8 +60,8 @@ REVERSE: Style = Style(reverse=True)
 
 # Text icons.
 # Predefined/common text items
-TICK: Text = Text("\u2713", style=Style(color="green3", bold=True, italic=True))
-CROSS: Text = Text("\u2717", style=Style(color="red3", bold=True, italic=True))
+TICK: Text = Text("\u2705", style=Style(color="green3", bold=True, italic=True))
+CROSS: Text = Text("\u274c", style=Style(color="red3", bold=True, italic=True))
 
 
 def log_info(msg: str) -> None:

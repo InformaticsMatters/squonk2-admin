@@ -19,11 +19,11 @@ _COLUMNS: List[Tuple[str, Style, str]] = [
     ("UUID", common.UUID_STYLE, "left"),
     ("Created (UTC)", common.DATE_STYLE, "left"),
     ("Purpose", None, "left"),
-    ("P-ID", common.UUID_STYLE, "left"),
-    ("P-V", common.TASK_PURPOSE_VERSION_STYLE, "left"),
+    ("Purpose UUID", common.UUID_STYLE, "left"),
+    ("Version", common.TASK_PURPOSE_VERSION_STYLE, "left"),
     ("Done", None, "center"),
     ("Code", None, "center"),
-    ("Rem", None, "center"),
+    ("Removal", None, "center"),
 ]
 
 # Styles for instance phases.
