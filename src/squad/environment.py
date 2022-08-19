@@ -16,7 +16,7 @@ from yaml import FullLoader, load
 # See the project's 'environments' file for an example of the content of the file.
 _ENVIRONMENT_DIRECTORY: str = "~/.squad"
 _ENVIRONMENT_FILE: str = os.environ.get(
-    "SQUAD_ENVIRONMENTS_FILE", f"{_ENVIRONMENT_DIRECTORY}/environments"
+    "SQUONK2_ENVIRONMENTS_FILE", f"{_ENVIRONMENT_DIRECTORY}/environments"
 )
 
 # The key for the block of environments

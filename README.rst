@@ -66,9 +66,9 @@ directory, in the file ``~/.squad/environments``. If you place your populated
 environments file there you need do nothing else prior to running **SquAd**.
 If you prefer to put your ``environments`` file elsewhere, or have multiple
 files, set the path to your file using the environment variable
-``SQUAD_ENVIRONMENTS_FILE``::
+``SQUONK2_ENVIRONMENTS_FILE``::
 
-    export SQUAD_ENVIRONMENTS_FILE=~/my-squad-environments
+    export SQUONK2_ENVIRONMENTS_FILE=~/my-squad-environments
 
 With an environments file in place you can run **SquAd**::
 
@@ -99,10 +99,10 @@ Logging
 -------
 
 You can enable logging from **SquAd** and the underlying textual framework by
-setting the environment variable ``SQUAD_LOGFILE`` when running the
+setting the environment variable ``SQUONK2_LOGFILE`` when running the
 application::
 
-    SQUAD_LOGFILE=./squad.log squad
+    SQUONK2_LOGFILE=./squad.log squad
 
 Debugging
 ---------
