@@ -16,8 +16,8 @@ from squad.widgets.env import EnvWidget
 from squad.widgets.info import InfoWidget
 from squad.widgets.topic import TopicWidget
 
-# Users set SQUAD_LOGFILE to enable logging
-# e.g. "export SQUAD_LOGFILE=./squad.log"
+# Users set SQUONK2_LOGFILE to enable logging
+# e.g. "export SQUONK2_LOGFILE=./squad.log"
 _LOG: Optional[str] = os.environ.get("SQUONK2_LOGFILE")
 
 

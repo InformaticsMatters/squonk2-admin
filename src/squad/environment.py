@@ -11,7 +11,7 @@ from yaml import FullLoader, load
 # directory. It contains 'environments' that define the connection details
 # for the various Keycloak, Data Manager and Account Server services.
 # This default is replaced with the value of the environment variable
-# 'SQUAD_ENVIRONMENTS_FILE'.
+# 'SQUONK2_ENVIRONMENTS_FILE'.
 #
 # See the project's 'environments' file for an example of the content of the file.
 _ENVIRONMENT_DIRECTORY: str = "~/.squad"
