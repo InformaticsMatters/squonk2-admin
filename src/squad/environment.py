@@ -7,14 +7,14 @@ from typing import Any, Dict, Optional
 
 from yaml import FullLoader, load
 
-# The environments file (YAML) is typically expected in the user's '~/.squad'
+# The environments file (YAML) is typically expected in the user's '~/.squonk2'
 # directory. It contains 'environments' that define the connection details
 # for the various Keycloak, Data Manager and Account Server services.
 # This default is replaced with the value of the environment variable
 # 'SQUONK2_ENVIRONMENTS_FILE'.
 #
 # See the project's 'environments' file for an example of the content of the file.
-_ENVIRONMENT_DIRECTORY: str = "~/.squad"
+_ENVIRONMENT_DIRECTORY: str = "~/.squonk2"
 _ENVIRONMENT_FILE: str = os.environ.get(
     "SQUONK2_ENVIRONMENTS_FILE", f"{_ENVIRONMENT_DIRECTORY}/environments"
 )
@@ -68,7 +68,7 @@ class Environment:
         # During CI this will fail, so we avoid creating the
         # directory if CI is set.
         if not os.environ.get("CI"):
-            os.makedirs(os.path.expanduser("~/.squad"), exist_ok=True)
+            os.makedirs(os.path.expanduser(_ENVIRONMENT_DIRECTORY), exist_ok=True)
 
         if not os.path.exists(Environment.__environments_file):
             raise Exception(f"{Environment.__environments_file} does not exist")

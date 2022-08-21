@@ -62,13 +62,13 @@ of this project:
        :code: yaml
 
 When **SquAd** starts it will look for the environments file in your home
-directory, in the file ``~/.squad/environments``. If you place your populated
+directory, in the file ``~/.squonk2/environments``. If you place your populated
 environments file there you need do nothing else prior to running **SquAd**.
 If you prefer to put your ``environments`` file elsewhere, or have multiple
 files, set the path to your file using the environment variable
 ``SQUONK2_ENVIRONMENTS_FILE``::
 
-    export SQUONK2_ENVIRONMENTS_FILE=~/my-squad-environments
+    export SQUONK2_ENVIRONMENTS_FILE=~/my-squonk2-environments
 
 With an environments file in place you can run **SquAd**::
 
