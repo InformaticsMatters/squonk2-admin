@@ -177,7 +177,7 @@ class Products(TopicRenderer):
                     common.truncate(row[4], common.NAME_LENGTH),
                     str(row[5]),
                     str(row[6]),
-                    row[6],
+                    row[7],
                     claim,
                     burn_coins,
                     coins,
