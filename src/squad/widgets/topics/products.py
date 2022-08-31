@@ -20,6 +20,7 @@ from .base import SortOrder, TopicRenderer
 _COLUMNS: List[Tuple[str, Style, str]] = [
     ("UUID", common.UUID_STYLE, "left"),
     ("Type", common.PRODUCT_TYPE_STYLE, "left"),
+    ("Flavour", common.PRODUCT_FLAVOUR_STYLE, "left"),
     ("Unit", common.NAME_STYLE, "left"),
     ("Name", common.NAME_STYLE, "left"),
     ("On", common.COIN_DAY_STYLE, "right"),
@@ -40,7 +41,7 @@ class Products(TopicRenderer):
     def __init__(self) -> None:
         # Default sort column
         self.num_columns = len(_COLUMNS)
-        self.sort_column = 10
+        self.sort_column = 11
 
     def render(self) -> Panel:
         """Render the widget."""
@@ -83,13 +84,17 @@ class Products(TopicRenderer):
                     size: str = ""
                 else:
                     size = product["storage"]["size"]["current"]
+                flavour = ""
+                if "flavour" in product["product"]:
+                    flavour = product["product"]["flavour"]
                 data[f"{row_number}"] = [
                     product["product"]["id"],
                     product["product"]["type"],
+                    flavour,
                     product["unit"]["name"],
                     product["product"]["name"],
                     humanize.ordinal(product["coins"]["billing_day"]),
-                    product["coins"]["remaining_days"],
+                    str(product["coins"]["remaining_days"]),
                     size,
                     p_claim,
                     Decimal(product["coins"]["current_burn_rate"]),
@@ -109,19 +114,19 @@ class Products(TopicRenderer):
                 by=[self.sort_column], ascending=self.sort_order == SortOrder.ASCENDING
             ).iterrows():
 
-                if row[7]:
-                    claim: Text = Text(common.truncate(row[7], common.NAME_LENGTH))
+                if row[8]:
+                    claim: Text = Text(common.truncate(row[8], common.NAME_LENGTH))
                 else:
                     claim = common.CROSS
 
                 # Get data back out of the frame,
                 # realising that pandas wil have all sorts of floating point
                 # precision issues!
-                burn: Decimal = Decimal(format(row[8], ".1f"))
-                coins_used: Decimal = Decimal(format(row[9], ".1f"))
-                prediction: Decimal = Decimal(format(row[10], ".1f"))
-                allowance: Decimal = Decimal(format(row[11], ".1f"))
-                limit: Decimal = Decimal(format(row[12], ".1f"))
+                burn: Decimal = Decimal(format(row[9], ".1f"))
+                coins_used: Decimal = Decimal(format(row[10], ".1f"))
+                prediction: Decimal = Decimal(format(row[11], ".1f"))
+                allowance: Decimal = Decimal(format(row[12], ".1f"))
+                limit: Decimal = Decimal(format(row[13], ".1f"))
 
                 coins_used_style: Style = common.COIN_STYLE
                 if coins_used > limit:
@@ -167,10 +172,11 @@ class Products(TopicRenderer):
                     str(self.table.row_count + 1),
                     row[0],
                     row[1],
-                    common.truncate(row[2], common.NAME_LENGTH),
+                    row[2],
                     common.truncate(row[3], common.NAME_LENGTH),
-                    str(row[4]),
+                    common.truncate(row[4], common.NAME_LENGTH),
                     str(row[5]),
+                    str(row[6]),
                     row[6],
                     claim,
                     burn_coins,

@@ -40,6 +40,7 @@ JOB_RATE_STYLE: Style = Style(color="gold1", italic=True)
 TASK_PURPOSE_VERSION_STYLE: Style = Style(color="dark_khaki")
 # Style for product types, and coins
 PRODUCT_TYPE_STYLE: Style = Style(color="light_slate_grey")
+PRODUCT_FLAVOUR_STYLE: Style = Style(color="dark_orange")
 COIN_STYLE: Style = Style(color="yellow1", italic=True)
 COIN_OVER_ALLOWANCE_STYLE: Style = Style(color="yellow1", bgcolor="dark_orange")
 COIN_OVER_LIMIT_STYLE: Style = Style(color="yellow1", bgcolor="deep_pink2")
