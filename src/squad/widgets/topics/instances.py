@@ -1,6 +1,7 @@
 """A widget used to display DM Instance information.
 """
 from datetime import datetime
+from decimal import Decimal
 from typing import Any, Dict, List, Tuple
 
 import pandas
@@ -22,6 +23,7 @@ _COLUMNS: List[Tuple[str, Style, str]] = [
     ("Owner", common.USER_STYLE, "left"),
     ("Launched (UTC)", common.DATE_STYLE, "left"),
     ("Phase", common.USER_STYLE, "left"),
+    ("Coins", common.COIN_STYLE, "right"),
     ("App/Job", None, "left"),
 ]
 
@@ -102,6 +104,10 @@ class Instances(TopicRenderer):
                         job.append(_APPS[app_id], style=common.APP_STYLE)
                     else:
                         job.append(app_id, style=common.APP_STYLE)
+                if "coins" in instance:
+                    coins: Decimal = Decimal(instance["coins"])
+                else:
+                    coins = Decimal()
                 data[f"{row_number}"] = [
                     instance["id"],
                     archived,
@@ -109,6 +115,7 @@ class Instances(TopicRenderer):
                     instance["owner"],
                     instance["launched"],
                     instance["phase"],
+                    coins,
                     str(job),
                 ]
                 row_number += 1
@@ -122,7 +129,7 @@ class Instances(TopicRenderer):
             ).iterrows():
                 phase: str = row[5]
                 # Identify App/Job for prettier rendering.
-                app_job: List[str] = row[6].split("|")
+                app_job: List[str] = row[7].split("|")
                 if len(app_job) == 1:
                     # It's an application.
                     app_job_id: Text = Text(app_job[0], style=common.APP_STYLE)
@@ -140,6 +147,7 @@ class Instances(TopicRenderer):
                     row[3],
                     row[4],
                     Text(phase, style=_PHASE_STYLE.get(phase, _DEFAULT_PHASE_STYLE)),
+                    str(row[6]),
                     app_job_id,
                 )
 

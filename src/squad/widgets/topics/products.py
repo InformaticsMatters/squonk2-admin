@@ -94,7 +94,7 @@ class Products(TopicRenderer):
                     product["unit"]["name"],
                     product["product"]["name"],
                     humanize.ordinal(product["coins"]["billing_day"]),
-                    str(product["coins"]["remaining_days"]),
+                    product["coins"]["remaining_days"],
                     size,
                     p_claim,
                     Decimal(product["coins"]["current_burn_rate"]),
