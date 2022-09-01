@@ -23,9 +23,10 @@ _COLUMNS: List[Tuple[str, Style, str]] = [
     ("Name", common.NAME_STYLE, "left"),
     ("Owner", common.USER_STYLE, "left"),
     ("Launched (UTC)", common.DATE_STYLE, "left"),
-    ("Phase", common.USER_STYLE, "left"),
+    ("Phase", common.USER_STYLE, "center"),
     ("Coins", common.COIN_STYLE, "right"),
-    ("App/Job", None, "left"),
+    ("App/Job", None, "right"),
+    ("Type", None, "left"),
 ]
 
 # Styles for instance phases.
@@ -35,6 +36,13 @@ _PHASE_STYLE: Dict[str, Style] = {
     "FAILED": Style(color="red3"),
 }
 _DEFAULT_PHASE_STYLE: Style = Style(color="yellow3")
+
+# Styles for instance phases.
+_IMAGE_TYPE_STYLE: Dict[str, Style] = {
+    "SIMPLE": Style(color="thistle1"),
+    "NEXTFLOW": Style(color="orchid"),
+}
+_DEFAULT_IMAGE_TYPE_STYLE: Style = Style(color="bright_white")
 
 # A lookup of instance application ID to 'friendly name.
 # The key is the DM Application ID.
@@ -96,10 +104,12 @@ class Instances(TopicRenderer):
                     archived = True
                 name: str = common.truncate(instance["name"], common.NAME_LENGTH)
                 job: Text = Text(no_wrap=True)
+                image_type: str = ""
                 if instance["application_type"] == "JOB":
                     job.append(instance["job_job"], style=common.JOB_JOB_STYLE)
-                    job.append("|", style=common.JOB_SEPARATOR_STYLE)
+                    job.append("|")
                     job.append(instance["job_version"], style=common.JOB_VERSION_STYLE)
+                    image_type = instance["job_image_type"]
                 else:
                     # It's an application instance.
                     # Replace the application with something more friendly.
@@ -121,6 +131,7 @@ class Instances(TopicRenderer):
                     instance["phase"],
                     coins,
                     str(job),
+                    image_type,
                 ]
                 row_number += 1
 
@@ -140,7 +151,7 @@ class Instances(TopicRenderer):
                 else:
                     # It's a job.
                     app_job_id = Text(app_job[0], style=common.JOB_JOB_STYLE)
-                    app_job_id.append("|", style=common.JOB_SEPARATOR_STYLE)
+                    app_job_id.append(" ")
                     app_job_id.append(app_job[1], style=common.JOB_VERSION_STYLE)
                 # Sanitise coins
                 coins = common.remove_exponent(Decimal(row[6]))
@@ -150,6 +161,7 @@ class Instances(TopicRenderer):
                         coins_str += ".0"
                 else:
                     coins_str = ""
+                image_type = row[8]
 
                 self.table.add_row(
                     str(self.table.row_count + 1),
@@ -161,6 +173,12 @@ class Instances(TopicRenderer):
                     Text(phase, style=_PHASE_STYLE.get(phase, _DEFAULT_PHASE_STYLE)),
                     coins_str,
                     app_job_id,
+                    Text(
+                        image_type,
+                        style=_IMAGE_TYPE_STYLE.get(
+                            image_type, _DEFAULT_IMAGE_TYPE_STYLE
+                        ),
+                    ),
                 )
 
         title: str = f"Instances ({self.table.row_count})"
