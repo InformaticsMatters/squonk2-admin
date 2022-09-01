@@ -4,6 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any, Dict, List, Tuple
 
+import humanize
 import pandas
 from rich.panel import Panel
 from rich.style import Style
@@ -38,6 +39,9 @@ _DEFAULT_PHASE_STYLE: Style = Style(color="yellow3")
 # A lookup of instance application ID to 'friendly name.
 # The key is the DM Application ID.
 _APPS: Dict[str, str] = {"jupyternotebooks.squonk.it": "Jupyter Notebook"}
+
+# A zero to compare against
+_ZERO: Decimal = Decimal()
 
 
 class Instances(TopicRenderer):
@@ -138,6 +142,14 @@ class Instances(TopicRenderer):
                     app_job_id = Text(app_job[0], style=common.JOB_JOB_STYLE)
                     app_job_id.append("|", style=common.JOB_SEPARATOR_STYLE)
                     app_job_id.append(app_job[1], style=common.JOB_VERSION_STYLE)
+                # Sanitise coins
+                coins = common.remove_exponent(Decimal(row[6]))
+                if coins > _ZERO:
+                    coins_str: str = humanize.intcomma(str(coins))
+                    if "." not in coins_str:
+                        coins_str += ".0"
+                else:
+                    coins_str = ""
 
                 self.table.add_row(
                     str(self.table.row_count + 1),
@@ -147,7 +159,7 @@ class Instances(TopicRenderer):
                     row[3],
                     row[4],
                     Text(phase, style=_PHASE_STYLE.get(phase, _DEFAULT_PHASE_STYLE)),
-                    str(row[6]),
+                    coins_str,
                     app_job_id,
                 )
 

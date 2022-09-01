@@ -1,5 +1,7 @@
 """Common material (constants etc.).
 """
+from decimal import Decimal
+
 from rich.style import Style
 from rich.text import Text
 import textual
@@ -87,3 +89,10 @@ def truncate(line: str, length: int) -> str:
     if len(line) <= length:
         return line
     return line[: length - 1] + "\u2026"
+
+
+def remove_exponent(num: Decimal) -> Decimal:
+    """Returns better decimals, i.e. 0.3000 becomes 0.3
+    and 4.0 becomes 4.
+    """
+    return num.quantize(Decimal(1)) if num == num.to_integral() else num.normalize()
