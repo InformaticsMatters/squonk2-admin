@@ -45,9 +45,9 @@ Installation
 **SquAd** is a Python application, written with Python 3.10 and published
 to `PyPI`_ and is easily installed using ``pip``::
 
-    pip install im-squonk2-admin
+    pip install im-squad
 
-.. _pypi: https://pypi.org/project/im-squonk2-admin/
+.. _pypi: https://pypi.org/project/im-squad/
 
 *********
 Execution
@@ -58,8 +58,49 @@ Before running **SquAd** you must have access to a Squonk2 environment.
 *environments* file. An example file, ``environments``, is located in the root
 of this project:
 
-    .. include:: environments
-       :code: yaml
+..  code-block:: yaml
+
+    ---
+    # An example SquAd environments file.
+    #
+    # It provides all the connection details for one or more Squonk2 environments.
+    # It is expected to be found in the user's home directory
+    # as '~/.squad/environments' or the user can 'point' to it by setting
+    # 'SQUAD_ENVIRONMENT_FILE', e.g. 'export SQUAD_ENVIRONMENT_FILE=~/my-env'
+
+    # The 'environments' block defines one or more environments.
+    # Each has a name. Here we define an environment called 'site-a'
+    # but environments can be called anything YAML accepts as a key,
+    # although it would aid consistency if you restrict your names to letters
+    # and hyphens.
+    environments:
+      site-a:
+        # The hostname of the keycloak server, without a 'http' prefix
+        # and without a '/auth' suffix.
+        keycloak-hostname: example.com
+        # The realm name used for the Squonk2 environment.
+        keycloak-realm: squonk2
+        # The Keycloak client IDs of the Account Server and Data Manager.
+        # The Account Server client ID is optional.
+        keycloak-as-client-id: account-server-api
+        keycloak-dm-client-id: data-manager-api
+        # The hostnames of the Account Server and Data Manager APIs,
+        # without a 'http' prefix and without an 'api' suffix.
+        # If you have not provided an Account Server client ID its
+        # hostname value is not required.
+        as-hostname: as.example.com
+        dm-hostname: dm.example.com
+        # The username and password of an admin user that has access
+        # to the Account Server and Data Manager.
+        # The user *MUST* have admin rights.
+        admin-user: dlister
+        admin-password: blob1234
+
+    # The final part of the file is a 'default' property,
+    # which SquAd uses to select the an environment from the block above
+    # when all else fails. It's simply the name of one of the environment
+    # declarations above.
+    default: site-a
 
 When **SquAd** starts it will look for the environments file in your home
 directory, in the file ``~/.squonk2/environments``. If you place your populated
