@@ -4,6 +4,15 @@
 Squonk2 Admin
 #############
 
+.. image:: https://img.shields.io/pypi/pyversions/im-squad
+   :alt: PyPI - Python Version
+.. image:: https://img.shields.io/pypi/v/im-squad
+   :alt: PyPI
+.. image:: https://img.shields.io/github/license/informaticsmatters/squonk2-admin
+   :alt: GitHub
+.. image:: https://img.shields.io/github/workflow/status/informaticsmatters/squonk2-admin/build
+   :alt: GitHub Workflow Status
+
 **SquAd** (Squonk2 Administration) is s Textual-UI (TUI) for the
 visualisation and administration of Squonk2 environments. **SquAd** is
 designed to be used by those with Squonk2 administrative privileges,
