@@ -151,6 +151,10 @@ def main() -> int:
     # Load the DM/AS config from the environment file
     # we do this here to make sure the environment is intact
     # before allowing any widgets to use it.
+    names: List[str] = Environment.load()
+    if not names:
+        print("Error loading environment - no environments")
+        sys.exit(1)
     if args.name:
         try:
             env: Environment = Environment(args.name)
@@ -158,10 +162,6 @@ def main() -> int:
             print(f"Error loading environment: {ex}")
             sys.exit(1)
     else:
-        names: List[str] = Environment.load()
-        if not names:
-            print("Error loading environment - no environments")
-            sys.exit(1)
         try:
             env = Environment(names[0])
         except Exception as ex:  # pylint: disable=broad-except
