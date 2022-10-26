@@ -3,7 +3,7 @@
 import argparse
 import os
 import sys
-from typing import Optional
+from typing import List, Optional
 
 from textual.app import App
 from squonk2.as_api import AsApi
@@ -11,6 +11,7 @@ from squonk2.dm_api import DmApi
 from squonk2.environment import Environment
 
 from squad import common
+from squad import environment
 from squad.widgets.logo import LogoWidget
 from squad.widgets.env import EnvWidget
 from squad.widgets.info import InfoWidget
@@ -144,21 +145,36 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    # Arg-provided name?
+    # If not use default.
+    #
     # Load the DM/AS config from the environment file
     # we do this here to make sure the environment is intact
     # before allowing any widgets to use it.
-    name: Optional[str] = args.name if args.name else None
-    try:
-        Environment.init(name=name)
-    except Exception as ex:  # pylint: disable=broad-except
-        print(f"Error loading environment: {ex}")
-        sys.exit(1)
+    if args.name:
+        try:
+            env: Environment = Environment(args.name)
+        except Exception as ex:  # pylint: disable=broad-except
+            print(f"Error loading environment: {ex}")
+            sys.exit(1)
+    else:
+        names: List[str] = Environment.load()
+        if not names:
+            print("Error loading environment - no environments")
+            sys.exit(1)
+        try:
+            env = Environment(names[0])
+        except Exception as ex:  # pylint: disable=broad-except
+            print(f"Error loading environment: {ex}")
+            sys.exit(1)
 
+    # Set the environment (so others can use it)
+    environment.set_environment(env)
     # Set the API URLs for the AS and DM
     # based on the environment we've just read.
-    if Environment.as_api():
-        AsApi.set_api_url(Environment.as_api(), verify_ssl_cert=False)
-    DmApi.set_api_url(Environment.dm_api(), verify_ssl_cert=False)
+    if env.as_api():
+        AsApi.set_api_url(env.as_api(), verify_ssl_cert=False)
+    DmApi.set_api_url(env.dm_api(), verify_ssl_cert=False)
 
     # Redirect stderr to avoid any potential SSL errors
     # e.g. the 'ssl.SSLCertVerificationError'

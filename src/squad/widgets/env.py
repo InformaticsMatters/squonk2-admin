@@ -10,9 +10,9 @@ from rich import box
 from textual.widget import Widget
 from squonk2.dm_api import DmApi, DmApiRv
 from squonk2.as_api import AsApi, AsApiRv
-from squonk2.environment import Environment
 
 from squad import common
+from squad.environment import get_environment
 from squad.access_token import AccessToken
 
 _KEY_STYLE: Style = Style(color="orange_red1")
@@ -74,27 +74,29 @@ class EnvWidget(Widget):  # type: ignore
         # The 'Authentication host' is a special value,
         # it contains a 'tick' or 'cross' depending on whether a
         # DM token was obtained.
-        kc_host = Text(f"{Environment.keycloak_hostname()} ", style=_KEY_VALUE_STYLE)
+        kc_host = Text(
+            f"{get_environment().keycloak_hostname()} ", style=_KEY_VALUE_STYLE
+        )
         if self.dm_access_token:
             kc_host.append(common.TICK)
         else:
             kc_host.append(common.CROSS)
 
         # The API lines are also dynamically styled.
-        as_hostname: Optional[str] = Environment.as_hostname()
+        as_hostname: Optional[str] = get_environment().as_hostname()
         if as_hostname:
             as_hostname_style: Style = _KEY_VALUE_STYLE
         else:
             as_hostname = "(Undefined)"
             as_hostname_style = _VALUE_ERROR_STYLE
 
-        table.add_row("Env", Environment.environment())
+        table.add_row("Env", get_environment().environment())
         table.add_row("Auth", kc_host)
         table.add_row(
             "AS", Text(common.truncate(as_hostname, 40), style=as_hostname_style)
         )
         table.add_row("v", as_api_version_value)
-        table.add_row("DM", common.truncate(Environment.dm_hostname(), 40))
+        table.add_row("DM", common.truncate(get_environment().dm_hostname(), 40))
         table.add_row("v", dm_api_version_value)
 
         return Panel(
