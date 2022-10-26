@@ -10,9 +10,9 @@ from rich import box
 from textual.widget import Widget
 from squonk2.dm_api import DmApi, DmApiRv
 from squonk2.as_api import AsApi, AsApiRv
+from squonk2.environment import Environment
 
 from squad import common
-from squad.environment import Environment
 from squad.access_token import AccessToken
 
 _KEY_STYLE: Style = Style(color="orange_red1")

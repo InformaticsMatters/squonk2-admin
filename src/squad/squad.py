@@ -8,9 +8,9 @@ from typing import Optional
 from textual.app import App
 from squonk2.as_api import AsApi
 from squonk2.dm_api import DmApi
+from squonk2.environment import Environment
 
 from squad import common
-from squad.environment import Environment
 from squad.widgets.logo import LogoWidget
 from squad.widgets.env import EnvWidget
 from squad.widgets.info import InfoWidget

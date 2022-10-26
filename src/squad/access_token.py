@@ -2,8 +2,7 @@
 """
 from typing import Optional
 from squonk2.auth import Auth
-
-from squad.environment import Environment
+from squonk2.environment import Environment
 
 
 class AccessToken:
