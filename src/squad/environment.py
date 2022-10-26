@@ -1,6 +1,6 @@
 """A holder of the Squonk2 Environment instance.
 """
-from typing import Optional
+from typing import List, Optional
 
 from squonk2.environment import Environment
 
@@ -14,7 +14,12 @@ def set_environment(chosen_env: Environment) -> None:
 
 
 def get_environment() -> Environment:
-    """Gets the environment, expected to have been set."""
-    assert _ENVIRONMENT
+    """Gets the environment, expected to have been set.
+    If not set an attempt to get the default environment is made.
+    """
+    if _ENVIRONMENT:
+        return _ENVIRONMENT
 
-    return _ENVIRONMENT
+    names: List[str] = Environment.load()
+    assert names
+    return Environment(names[0])
