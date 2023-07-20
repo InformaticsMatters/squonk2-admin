@@ -22,6 +22,9 @@ on:
     - '**'
     tags-ignore:
     - '**'
+  schedule:
+  # Build daily at 6:41am...
+  - cron: '12 41 * * *'
 
 jobs:
   build:
@@ -32,9 +35,9 @@ jobs:
         - '3.10'
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install requirements
